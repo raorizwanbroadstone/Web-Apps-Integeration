@@ -115,6 +115,17 @@ All credentials and settings are loaded from `.env`:
 | `API_VERSION` | `7.1` | Azure DevOps REST API version |
 | `BASE_URL` | `https://dev.azure.com/cytex-demo` | Root URL for all API calls |
 
+### Required PAT Permissions
+
+When creating the PAT in Azure DevOps (**User Settings → Personal Access Tokens → New Token**), select **Custom defined** and grant the following scopes:
+
+| Scope | Permission | Why |
+|-------|-----------|-----|
+| **Code** | Read & write | Read repo list + commit `azure-pipelines.yml` |
+| **Build** | Read & execute | Create pipeline definitions, queue runs, poll status, download artifacts |
+
+> Both are required. Missing either will cause 401/403 errors at the corresponding step.
+
 ---
 
 ## End Result
