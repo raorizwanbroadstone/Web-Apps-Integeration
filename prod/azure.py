@@ -56,27 +56,34 @@ def _get_branch_sha(project, repo_id, branch):
     return refs[0]["objectId"] if refs else _ZERO_SHA
 
 
-def _yaml_exists(project, repo_id, branch):
-    """Returns True if azure-pipelines.yml already exists on the branch."""
+def _get_existing_yaml(project, repo_id, branch):
+    """Returns current content of azure-pipelines.yml, or None if it doesn't exist."""
     url = (
         f"{BASE_URL}/{project}/_apis/git/repositories/{repo_id}/items"
         f"?path=/azure-pipelines.yml&versionDescriptor.version={branch}"
-        f"&api-version={API_VERSION}"
+        f"&$format=text&api-version={API_VERSION}"
     )
     try:
-        _get(url)
-        return True
+        return _get(url).text
     except requests.HTTPError as e:
         if e.response.status_code == 404:
-            return False
+            return None
         raise
 
 
 def push_pipeline_yaml(project, repo_id, default_branch, yaml_content):
-    """Commits azure-pipelines.yml to the repo's default branch."""
+    """Commits azure-pipelines.yml to the repo's default branch.
+
+    Returns None (skips the push) if the file already exists with identical content.
+    """
     branch = default_branch.replace("refs/heads/", "")
+    existing = _get_existing_yaml(project, repo_id, branch)
+
+    if existing is not None and existing.strip() == yaml_content.strip():
+        return None  # already up to date, nothing to commit
+
     old_sha = _get_branch_sha(project, repo_id, branch)
-    change_type = "edit" if _yaml_exists(project, repo_id, branch) else "add"
+    change_type = "edit" if existing is not None else "add"
 
     encoded = base64.b64encode(yaml_content.encode("utf-8")).decode("ascii")
 

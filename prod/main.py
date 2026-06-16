@@ -83,8 +83,11 @@ def scan_repo(project_name, repo):
 
     print(f"\n    Repo: {repo_name}")
 
-    push_pipeline_yaml(project_name, repo_id, default_branch, PIPELINE_YAML)
-    print(f"    YAML pushed to {default_branch.replace('refs/heads/', '')}")
+    pushed = push_pipeline_yaml(project_name, repo_id, default_branch, PIPELINE_YAML)
+    if pushed is None:
+        print(f"    YAML already up to date, skipping commit")
+    else:
+        print(f"    YAML pushed to {default_branch.replace('refs/heads/', '')}")
 
     pipeline = create_pipeline(project_name, repo_id, repo_name)
     pipeline_id = pipeline["id"]
