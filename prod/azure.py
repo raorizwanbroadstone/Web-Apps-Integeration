@@ -5,7 +5,7 @@ import json
 import zipfile
 import os
 from datetime import datetime
-from constants import BASE_URL, PROJECT, API_VERSION, PAT, REPORT_DIR
+from constants import BASE_URL, PROJECT, API_VERSION, PAT, REPORT_DIR, SBOM_DIR
 
 AUTH = HTTPBasicAuth("", PAT)
 
@@ -33,6 +33,16 @@ def get_latest_build():
 def get_build_artifacts(build_id):
     url = f"{BASE_URL}/{PROJECT}/_apis/build/builds/{build_id}/artifacts?api-version={API_VERSION}"
     return get_json(url)
+
+
+def _save_json(data, directory, filename):
+    os.makedirs(directory, exist_ok=True)
+    path = os.path.join(directory, filename)
+
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+    return path
 
 
 def download_aibom_report(build_id, org, project, repo_name):
@@ -75,3 +85,25 @@ def download_aibom_report(build_id, org, project, repo_name):
         json.dump(data, f, indent=2)
 
     return path
+
+def download_grype_report(build_id, org, project, repo_name):
+    artifacts = get_build_artifacts(build_id).get("value", [])
+
+    target = next((a for a in artifacts if a["name"] == "grype-report"), None)
+    if not target:
+        return None
+
+    r = requests.get(target["resource"]["downloadUrl"], auth=AUTH, timeout=120)
+    r.raise_for_status()
+
+    with zipfile.ZipFile(io.BytesIO(r.content)) as z:
+        json_file = next((n for n in z.namelist() if n.endswith(".json")), None)
+        if not json_file:
+            return None
+
+        data = json.loads(z.read(json_file).decode("utf-8"))
+
+    ts = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+    filename = f"grype_{org}_{project}_{repo_name}_{ts}.json"
+
+    return _save_json(data, SBOM_DIR, filename)

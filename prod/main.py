@@ -1,4 +1,8 @@
-from azure import get_latest_build, download_aibom_report
+from azure import (
+    get_latest_build,
+    download_aibom_report,
+    download_grype_report
+)
 from constants import ORG, PROJECT
 
 
@@ -10,21 +14,26 @@ def main():
 
     build_id = build["id"]
 
-    print(f"Build ID: {build_id}")
-
     repo_name = build.get("repository", {}).get("name", "repo")
 
-    file_path = download_aibom_report(
+    print("Build:", build_id)
+
+    aibom_path = download_aibom_report(
         build_id,
         ORG,
         PROJECT,
         repo_name
     )
 
-    if not file_path:
-        raise Exception("AIBOM not found")
+    grype_path = download_grype_report(
+        build_id,
+        ORG,
+        PROJECT,
+        repo_name
+    )
 
-    print(f"Saved: {file_path}")
+    print("AIBOM:", aibom_path)
+    print("SBOM :", grype_path)
 
 
 if __name__ == "__main__":
