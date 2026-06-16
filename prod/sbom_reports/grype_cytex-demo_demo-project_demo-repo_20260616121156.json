@@ -1,0 +1,784 @@
+{
+  "matches": [
+    {
+      "vulnerability": {
+        "id": "GHSA-3644-q5cj-c5c7",
+        "dataSource": "https://github.com/advisories/GHSA-3644-q5cj-c5c7",
+        "namespace": "github:language:python",
+        "severity": "High",
+        "urls": [
+          "https://github.com/langchain-ai/langsmith-sdk/security/advisories/GHSA-3644-q5cj-c5c7",
+          "https://nvd.nist.gov/vuln/detail/CVE-2026-45134"
+        ],
+        "description": "LangSmith SDK: Public prompt pull deserializes untrusted manifests without trust boundary warning",
+        "cvss": [
+          {
+            "type": "Secondary",
+            "version": "3.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N",
+            "metrics": {
+              "baseScore": 7.1,
+              "exploitabilityScore": 2.9,
+              "impactScore": 4.3
+            },
+            "vendorMetadata": {}
+          }
+        ],
+        "epss": [
+          {
+            "cve": "CVE-2026-45134",
+            "epss": 0.00199,
+            "percentile": 0.09804,
+            "date": "2026-06-15"
+          }
+        ],
+        "cwes": [
+          {
+            "cve": "CVE-2026-45134",
+            "cwe": "CWE-502",
+            "source": "security-advisories@github.com",
+            "type": "Primary"
+          }
+        ],
+        "fix": {
+          "versions": [
+            "0.3.30"
+          ],
+          "state": "fixed",
+          "available": [
+            {
+              "version": "0.3.30",
+              "date": "2026-05-13",
+              "kind": "first-observed"
+            }
+          ]
+        },
+        "advisories": [],
+        "risk": 0.14526999999999998
+      },
+      "relatedVulnerabilities": [
+        {
+          "id": "CVE-2026-45134",
+          "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2026-45134",
+          "namespace": "nvd:cpe",
+          "severity": "High",
+          "urls": [
+            "https://github.com/langchain-ai/langsmith-sdk/security/advisories/GHSA-3644-q5cj-c5c7"
+          ],
+          "description": "LangSmith Client SDKs provide SDK's for interacting with the LangSmith platform. Prior to LangSmith SDK Python 0.8.0 and JS/TS 0.6.0, the LangSmith SDK's prompt pull methods (pull_prompt / pull_prompt_commit in Python, pullPrompt / pullPromptCommit in JS/TS) fetch and deserialize prompt manifests from the LangSmith Hub. These manifests may contain serialized LangChain objects and model configuration that affect runtime behavior. When pulling a public prompt by owner/name identifier, the manifest content is controlled by an external party, but prior versions of the SDK did not distinguish this from pulling a prompt within the caller's own organization. This vulnerability is fixed in LangSmith SDK Python 0.8.0 and JS/TS 0.6.0.",
+          "cvss": [
+            {
+              "source": "security-advisories@github.com",
+              "type": "Secondary",
+              "version": "3.1",
+              "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N",
+              "metrics": {
+                "baseScore": 7.1,
+                "exploitabilityScore": 2.9,
+                "impactScore": 4.3
+              },
+              "vendorMetadata": {}
+            }
+          ],
+          "epss": [
+            {
+              "cve": "CVE-2026-45134",
+              "epss": 0.00199,
+              "percentile": 0.09804,
+              "date": "2026-06-15"
+            }
+          ],
+          "cwes": [
+            {
+              "cve": "CVE-2026-45134",
+              "cwe": "CWE-502",
+              "source": "security-advisories@github.com",
+              "type": "Primary"
+            }
+          ]
+        }
+      ],
+      "matchDetails": [
+        {
+          "type": "exact-direct-match",
+          "matcher": "python-matcher",
+          "searchedBy": {
+            "language": "python",
+            "namespace": "github:language:python",
+            "package": {
+              "name": "langchain",
+              "version": "0.3.26"
+            }
+          },
+          "found": {
+            "vulnerabilityID": "GHSA-3644-q5cj-c5c7",
+            "versionConstraint": "<0.3.30 (python)"
+          },
+          "fix": {
+            "suggestedVersion": "0.3.30"
+          }
+        }
+      ],
+      "artifact": {
+        "id": "0806feb81e1f3a4f",
+        "name": "langchain",
+        "version": "0.3.26",
+        "type": "python",
+        "locations": [
+          {
+            "path": "/requirements.txt",
+            "accessPath": "/requirements.txt",
+            "annotations": {
+              "evidence": "primary"
+            }
+          }
+        ],
+        "language": "python",
+        "licenses": [],
+        "cpes": [
+          "cpe:2.3:a:python-langchain:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python-langchain:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_langchain:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_langchain:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:langchain:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:langchain:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python-langchain:langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_langchain:langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:langchain:langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:langchain:0.3.26:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:pypi/langchain@0.3.26",
+        "upstreams": []
+      }
+    },
+    {
+      "vulnerability": {
+        "id": "GHSA-68rp-wp8r-4726",
+        "dataSource": "https://github.com/advisories/GHSA-68rp-wp8r-4726",
+        "namespace": "github:language:python",
+        "severity": "Low",
+        "urls": [
+          "https://github.com/pallets/flask/security/advisories/GHSA-68rp-wp8r-4726",
+          "https://github.com/pallets/flask/commit/089cb86dd22bff589a4eafb7ab8e42dc357623b4",
+          "https://github.com/pallets/flask/releases/tag/3.1.3",
+          "https://nvd.nist.gov/vuln/detail/CVE-2026-27205"
+        ],
+        "description": "Flask session does not add `Vary: Cookie` header when accessed in some ways",
+        "cvss": [
+          {
+            "type": "Secondary",
+            "version": "4.0",
+            "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+            "metrics": {
+              "baseScore": 2.3
+            },
+            "vendorMetadata": {}
+          }
+        ],
+        "epss": [
+          {
+            "cve": "CVE-2026-27205",
+            "epss": 0.00374,
+            "percentile": 0.28943,
+            "date": "2026-06-15"
+          }
+        ],
+        "cwes": [
+          {
+            "cve": "CVE-2026-27205",
+            "cwe": "CWE-524",
+            "source": "security-advisories@github.com",
+            "type": "Primary"
+          }
+        ],
+        "fix": {
+          "versions": [
+            "3.1.3"
+          ],
+          "state": "fixed",
+          "available": [
+            {
+              "version": "3.1.3",
+              "date": "2026-03-04",
+              "kind": "first-observed"
+            }
+          ]
+        },
+        "advisories": [],
+        "risk": 0.09911
+      },
+      "relatedVulnerabilities": [
+        {
+          "id": "CVE-2026-27205",
+          "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2026-27205",
+          "namespace": "nvd:cpe",
+          "severity": "Medium",
+          "urls": [
+            "https://github.com/pallets/flask/commit/089cb86dd22bff589a4eafb7ab8e42dc357623b4",
+            "https://github.com/pallets/flask/releases/tag/3.1.3",
+            "https://github.com/pallets/flask/security/advisories/GHSA-68rp-wp8r-4726"
+          ],
+          "description": "Flask is a web server gateway interface (WSGI) web application framework. In versions 3.1.2 and below, when the session object is accessed, Flask should set the Vary: Cookie header., resulting in a Use of Cache Containing Sensitive Information vulnerability. The logic instructs caches not to cache the response, as it may contain information specific to a logged in user. This is handled in most cases, but some forms of access such as the Python in operator were overlooked. The severity and risk depend on the application being hosted behind a caching proxy that doesn't ignore responses with cookies, not setting a Cache-Control header to mark pages as private or non-cacheable, and accessing the session in a way that only touches keys without reading values or mutating the session. The issue has been fixed in version 3.1.3.",
+          "cvss": [
+            {
+              "source": "nvd@nist.gov",
+              "type": "Primary",
+              "version": "3.1",
+              "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+              "metrics": {
+                "baseScore": 4.3,
+                "exploitabilityScore": 2.9,
+                "impactScore": 1.5
+              },
+              "vendorMetadata": {}
+            },
+            {
+              "source": "security-advisories@github.com",
+              "type": "Secondary",
+              "version": "4.0",
+              "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+              "metrics": {
+                "baseScore": 2.3
+              },
+              "vendorMetadata": {}
+            }
+          ],
+          "epss": [
+            {
+              "cve": "CVE-2026-27205",
+              "epss": 0.00374,
+              "percentile": 0.28943,
+              "date": "2026-06-15"
+            }
+          ],
+          "cwes": [
+            {
+              "cve": "CVE-2026-27205",
+              "cwe": "CWE-524",
+              "source": "security-advisories@github.com",
+              "type": "Primary"
+            }
+          ]
+        }
+      ],
+      "matchDetails": [
+        {
+          "type": "exact-direct-match",
+          "matcher": "python-matcher",
+          "searchedBy": {
+            "language": "python",
+            "namespace": "github:language:python",
+            "package": {
+              "name": "flask",
+              "version": "3.1.1"
+            }
+          },
+          "found": {
+            "vulnerabilityID": "GHSA-68rp-wp8r-4726",
+            "versionConstraint": "<3.1.3 (python)"
+          },
+          "fix": {
+            "suggestedVersion": "3.1.3"
+          }
+        }
+      ],
+      "artifact": {
+        "id": "fcff869d654d07e5",
+        "name": "flask",
+        "version": "3.1.1",
+        "type": "python",
+        "locations": [
+          {
+            "path": "/requirements.txt",
+            "accessPath": "/requirements.txt",
+            "annotations": {
+              "evidence": "primary"
+            }
+          }
+        ],
+        "language": "python",
+        "licenses": [],
+        "cpes": [
+          "cpe:2.3:a:python-flask:python-flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python-flask:python_flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_flask:python-flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_flask:python_flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:python-flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:python_flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:flask:python-flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:flask:python_flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python-flask:flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_flask:flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:flask:3.1.1:*:*:*:*:*:*:*",
+          "cpe:2.3:a:flask:flask:3.1.1:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:pypi/flask@3.1.1",
+        "upstreams": []
+      }
+    },
+    {
+      "vulnerability": {
+        "id": "GHSA-gc5v-m9x4-r6x2",
+        "dataSource": "https://github.com/advisories/GHSA-gc5v-m9x4-r6x2",
+        "namespace": "github:language:python",
+        "severity": "Medium",
+        "urls": [
+          "https://github.com/psf/requests/security/advisories/GHSA-gc5v-m9x4-r6x2",
+          "https://github.com/psf/requests/commit/66d21cb07bd6255b1280291c4fafb71803cdb3b7",
+          "https://github.com/psf/requests/releases/tag/v2.33.0",
+          "https://nvd.nist.gov/vuln/detail/CVE-2026-25645"
+        ],
+        "description": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+        "cvss": [
+          {
+            "type": "Secondary",
+            "version": "3.1",
+            "vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:H/A:N",
+            "metrics": {
+              "baseScore": 4.4,
+              "exploitabilityScore": 0.8,
+              "impactScore": 3.6
+            },
+            "vendorMetadata": {}
+          }
+        ],
+        "epss": [
+          {
+            "cve": "CVE-2026-25645",
+            "epss": 0.00157,
+            "percentile": 0.05177,
+            "date": "2026-06-15"
+          }
+        ],
+        "cwes": [
+          {
+            "cve": "CVE-2026-25645",
+            "cwe": "CWE-377",
+            "source": "security-advisories@github.com",
+            "type": "Secondary"
+          }
+        ],
+        "fix": {
+          "versions": [
+            "2.33.0"
+          ],
+          "state": "fixed",
+          "available": [
+            {
+              "version": "2.33.0",
+              "date": "2026-03-26",
+              "kind": "first-observed"
+            }
+          ]
+        },
+        "advisories": [],
+        "risk": 0.07379
+      },
+      "relatedVulnerabilities": [
+        {
+          "id": "CVE-2026-25645",
+          "dataSource": "https://nvd.nist.gov/vuln/detail/CVE-2026-25645",
+          "namespace": "nvd:cpe",
+          "severity": "Medium",
+          "urls": [
+            "https://github.com/psf/requests/commit/66d21cb07bd6255b1280291c4fafb71803cdb3b7",
+            "https://github.com/psf/requests/releases/tag/v2.33.0",
+            "https://github.com/psf/requests/security/advisories/GHSA-gc5v-m9x4-r6x2"
+          ],
+          "description": "Requests is a HTTP library. Prior to version 2.33.0, the `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temporary directory. If the target file already exists, it is reused without validation. A local attacker with write access to the temp directory could pre-create a malicious file that would be loaded in place of the legitimate one. Standard usage of the Requests library is not affected by this vulnerability. Only applications that call `extract_zipped_paths()` directly are impacted. Starting in version 2.33.0, the library extracts files to a non-deterministic location. If developers are unable to upgrade, they can set `TMPDIR` in their environment to a directory with restricted write access.",
+          "cvss": [
+            {
+              "source": "nvd@nist.gov",
+              "type": "Primary",
+              "version": "3.1",
+              "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+              "metrics": {
+                "baseScore": 5.5,
+                "exploitabilityScore": 1.9,
+                "impactScore": 3.6
+              },
+              "vendorMetadata": {}
+            },
+            {
+              "source": "security-advisories@github.com",
+              "type": "Secondary",
+              "version": "3.1",
+              "vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:H/A:N",
+              "metrics": {
+                "baseScore": 4.4,
+                "exploitabilityScore": 0.8,
+                "impactScore": 3.6
+              },
+              "vendorMetadata": {}
+            }
+          ],
+          "epss": [
+            {
+              "cve": "CVE-2026-25645",
+              "epss": 0.00157,
+              "percentile": 0.05177,
+              "date": "2026-06-15"
+            }
+          ],
+          "cwes": [
+            {
+              "cve": "CVE-2026-25645",
+              "cwe": "CWE-377",
+              "source": "security-advisories@github.com",
+              "type": "Secondary"
+            }
+          ]
+        }
+      ],
+      "matchDetails": [
+        {
+          "type": "exact-direct-match",
+          "matcher": "python-matcher",
+          "searchedBy": {
+            "language": "python",
+            "namespace": "github:language:python",
+            "package": {
+              "name": "requests",
+              "version": "2.32.4"
+            }
+          },
+          "found": {
+            "vulnerabilityID": "GHSA-gc5v-m9x4-r6x2",
+            "versionConstraint": "<2.33.0 (python)"
+          },
+          "fix": {
+            "suggestedVersion": "2.33.0"
+          }
+        }
+      ],
+      "artifact": {
+        "id": "3e0c9ab5c987c799",
+        "name": "requests",
+        "version": "2.32.4",
+        "type": "python",
+        "locations": [
+          {
+            "path": "/requirements.txt",
+            "accessPath": "/requirements.txt",
+            "annotations": {
+              "evidence": "primary"
+            }
+          }
+        ],
+        "language": "python",
+        "licenses": [],
+        "cpes": [
+          "cpe:2.3:a:python:requests:2.32.4:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:pypi/requests@2.32.4",
+        "upstreams": []
+      }
+    }
+  ],
+  "source": {
+    "type": "directory",
+    "target": "."
+  },
+  "distro": {
+    "name": "",
+    "version": "",
+    "idLike": null
+  },
+  "descriptor": {
+    "name": "grype",
+    "version": "0.114.0",
+    "configuration": {
+      "output": [
+        "json"
+      ],
+      "file": "",
+      "pretty": false,
+      "distro": "",
+      "add-cpes-if-none": false,
+      "output-template-file": "",
+      "check-for-app-update": true,
+      "only-fixed": false,
+      "only-notfixed": false,
+      "ignore-wontfix": "",
+      "platform": "",
+      "search": {
+        "scope": "squashed",
+        "unindexed-archives": false,
+        "indexed-archives": true
+      },
+      "ignore": [
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "kernel-headers",
+            "version": "",
+            "language": "",
+            "type": "rpm",
+            "location": "",
+            "upstream-name": "kernel"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        },
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "linux(-.*)?-headers-.*",
+            "version": "",
+            "language": "",
+            "type": "deb",
+            "location": "",
+            "upstream-name": "linux.*"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        },
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "linux-libc-dev",
+            "version": "",
+            "language": "",
+            "type": "deb",
+            "location": "",
+            "upstream-name": "linux"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        }
+      ],
+      "exclude": [],
+      "externalSources": {
+        "enable": false,
+        "maven": {
+          "searchUpstreamBySha1": true,
+          "baseUrl": "https://search.maven.org/solrsearch/select",
+          "rateLimit": 300000000
+        }
+      },
+      "match": {
+        "java": {
+          "using-cpes": false
+        },
+        "jvm": {
+          "using-cpes": true
+        },
+        "dotnet": {
+          "using-cpes": false
+        },
+        "golang": {
+          "using-cpes": false,
+          "always-use-cpe-for-stdlib": true,
+          "allow-main-module-pseudo-version-comparison": false
+        },
+        "javascript": {
+          "using-cpes": false
+        },
+        "python": {
+          "using-cpes": false
+        },
+        "ruby": {
+          "using-cpes": false
+        },
+        "rust": {
+          "using-cpes": false
+        },
+        "hex": {
+          "using-cpes": false
+        },
+        "stock": {
+          "using-cpes": true
+        },
+        "dpkg": {
+          "using-cpes": false,
+          "missing-epoch-strategy": "zero",
+          "use-cpes-for-eol": false
+        },
+        "rpm": {
+          "using-cpes": false,
+          "missing-epoch-strategy": "auto",
+          "use-cpes-for-eol": false
+        }
+      },
+      "fail-on-severity": "",
+      "registry": {
+        "insecure-skip-tls-verify": false,
+        "insecure-use-http": false,
+        "ca-cert": ""
+      },
+      "show-suppressed": false,
+      "by-cve": false,
+      "SortBy": {
+        "sort-by": "risk"
+      },
+      "name": "",
+      "default-image-pull-source": "",
+      "from": null,
+      "vex-documents": [],
+      "vex-add": [],
+      "match-upstream-kernel-headers": false,
+      "fix-channel": {
+        "redhat-eus": {
+          "apply": "auto",
+          "versions": ">= 8.0"
+        }
+      },
+      "timestamp": true,
+      "alerts": {
+        "enable-eol-distro-warnings": true
+      },
+      "db": {
+        "cache-dir": "/home/vsts/.cache/grype/db",
+        "update-url": "https://grype.anchore.io/databases",
+        "ca-cert": "",
+        "auto-update": true,
+        "validate-by-hash-on-start": true,
+        "validate-age": true,
+        "max-allowed-built-age": 432000000000000,
+        "require-update-check": false,
+        "update-available-timeout": 30000000000,
+        "update-download-timeout": 300000000000,
+        "max-update-check-frequency": 7200000000000
+      },
+      "exp": {},
+      "dev": {
+        "db": {
+          "debug": false
+        }
+      }
+    },
+    "db": {
+      "status": {
+        "schemaVersion": "v6.1.7",
+        "from": "https://grype.anchore.io/databases/v6/vulnerability-db_v6.1.7_2026-06-16T01:05:09Z_1781597641.tar.zst?checksum=sha256%3Acbf01c6e554ae7d4b2c7245553ac8b236b65f33edf711562cd7f72803301aade",
+        "built": "2026-06-16T08:14:01Z",
+        "path": "/home/vsts/.cache/grype/db/6/vulnerability.db",
+        "valid": true
+      },
+      "providers": {
+        "alma": {
+          "captured": "2026-06-16T01:05:09Z",
+          "input": "xxh64:c1dfedac2cbe9d8b"
+        },
+        "alpine": {
+          "captured": "2026-06-16T01:05:45Z",
+          "input": "xxh64:1f02dbaddc330a07"
+        },
+        "amazon": {
+          "captured": "2026-06-16T01:05:16Z",
+          "input": "xxh64:348624924616aab8"
+        },
+        "arch": {
+          "captured": "2026-06-16T01:05:33Z",
+          "input": "xxh64:d567b3f008de9476"
+        },
+        "bitnami": {
+          "captured": "2026-06-16T01:06:47Z",
+          "input": "xxh64:08b403708746eb00"
+        },
+        "chainguard": {
+          "captured": "2026-06-16T01:05:12Z",
+          "input": "xxh64:cb48ede164fa4be1"
+        },
+        "chainguard-libraries": {
+          "captured": "2026-06-16T01:05:50Z",
+          "input": "xxh64:64868fea514da158"
+        },
+        "debian": {
+          "captured": "2026-06-16T01:05:51Z",
+          "input": "xxh64:f41dfc4d13f13d65"
+        },
+        "echo": {
+          "captured": "2026-06-16T01:05:29Z",
+          "input": "xxh64:17588cba4e38f883"
+        },
+        "eol": {
+          "captured": "2026-06-16T01:05:42Z",
+          "input": "xxh64:71cde1cd18913367"
+        },
+        "epss": {
+          "captured": "2026-06-16T01:05:09Z",
+          "input": "xxh64:4bfa3a1864480f65"
+        },
+        "fedora": {
+          "captured": "2026-06-16T01:05:23Z",
+          "input": "xxh64:8b04355df450374d"
+        },
+        "github": {
+          "captured": "2026-06-16T01:05:22Z",
+          "input": "xxh64:33f304531ca9d130"
+        },
+        "govulndb": {
+          "captured": "2026-06-16T01:05:54Z",
+          "input": "xxh64:748dc7fca6cee03f"
+        },
+        "hummingbird": {
+          "captured": "2026-06-16T01:05:56Z",
+          "input": "xxh64:9d8bc9758a56754f"
+        },
+        "kev": {
+          "captured": "2026-06-16T01:06:14Z",
+          "input": "xxh64:9aad3eb4a329c4ad"
+        },
+        "mariner": {
+          "captured": "2026-06-16T01:05:21Z",
+          "input": "xxh64:2100f48d420b5e10"
+        },
+        "minimos": {
+          "captured": "2026-06-16T01:05:39Z",
+          "input": "xxh64:70ef4cf2f4264022"
+        },
+        "nvd": {
+          "captured": "2026-06-16T01:06:04Z",
+          "input": "xxh64:17cb8981831e7429"
+        },
+        "oracle": {
+          "captured": "2026-06-16T01:05:59Z",
+          "input": "xxh64:7e2de68a81f46d75"
+        },
+        "photon": {
+          "captured": "2026-06-16T01:05:50Z",
+          "input": "xxh64:41ff466775ab73d0"
+        },
+        "rhel": {
+          "captured": "2026-06-16T01:06:28Z",
+          "input": "xxh64:f4d78f6141109edb"
+        },
+        "secureos": {
+          "captured": "2026-06-16T01:05:51Z",
+          "input": "xxh64:45af8db863b753f7"
+        },
+        "sles": {
+          "captured": "2026-06-16T01:43:14Z",
+          "input": "xxh64:5e1966e81f842f6c"
+        },
+        "ubuntu": {
+          "captured": "2026-06-16T01:46:02Z",
+          "input": "xxh64:cb938ef7f42b45b3"
+        },
+        "wolfi": {
+          "captured": "2026-06-16T01:05:12Z",
+          "input": "xxh64:b23f701e22996665"
+        }
+      }
+    },
+    "timestamp": "2026-06-16T12:08:25.758426419Z"
+  }
+}

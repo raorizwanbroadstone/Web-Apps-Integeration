@@ -91,7 +91,7 @@ def scan_repo(project_name, repo):
 
     pipeline = create_pipeline(project_name, repo_id, repo_name)
     pipeline_id = pipeline["id"]
-    print(f"    Pipeline created: {pipeline_id}")
+    print(f"    Pipeline ready: {pipeline_id}")
 
     run = queue_pipeline_run(project_name, pipeline_id)
     run_id = run["id"]

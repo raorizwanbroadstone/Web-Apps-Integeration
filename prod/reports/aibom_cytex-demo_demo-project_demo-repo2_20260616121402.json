@@ -1,0 +1,134 @@
+{
+  "components": [
+    {
+      "bom-ref": "VectorStoreIndex_/home/vsts/work/1/s/app.py_22",
+      "description": "VectorStoreIndex \u2014 vector_store",
+      "name": "VectorStoreIndex",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/app.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "22"
+        }
+      ],
+      "type": "data"
+    },
+    {
+      "bom-ref": "command-r_/home/vsts/work/1/s/app.py_40",
+      "description": "command-r \u2014 model \u2014 cohere",
+      "name": "command-r",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/app.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "cohere"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "40"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gpt2_/home/vsts/work/1/s/app.py_65",
+      "description": "gpt2 \u2014 model \u2014 unknown",
+      "name": "gpt2",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/app.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "unknown"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "65"
+        }
+      ],
+      "type": "machine-learning-model"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "VectorStoreIndex_/home/vsts/work/1/s/app.py_22"
+    },
+    {
+      "ref": "command-r_/home/vsts/work/1/s/app.py_40"
+    },
+    {
+      "ref": "gpt2_/home/vsts/work/1/s/app.py_65"
+    }
+  ],
+  "metadata": {
+    "timestamp": "2026-06-16T12:10:51.311050+00:00",
+    "tools": [
+      {
+        "name": "cisco-aibom",
+        "vendor": "Cisco",
+        "version": "1.0.0rc2"
+      }
+    ]
+  },
+  "serialNumber": "urn:uuid:653a64c9-c336-4baa-93b4-96374bcea7c5",
+  "version": 1,
+  "vulnerabilities": [
+    {
+      "bom-ref": "BomRef.04915714975818031.08951301005412349",
+      "description": "env:COHERE_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:COHERE_API_KEY",
+      "id": "aibom-secret-env:COHERE_API_KEY_/home/vsts/work/1/s/app.py_37",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/app.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "37"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    },
+    {
+      "bom-ref": "BomRef.032031566536994016.44944410130626766",
+      "description": "env:GOOGLE_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:GOOGLE_API_KEY",
+      "id": "aibom-secret-env:GOOGLE_API_KEY_/home/vsts/work/1/s/app.py_27",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/app.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "27"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    }
+  ],
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6"
+}

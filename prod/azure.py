@@ -109,10 +109,23 @@ def push_pipeline_yaml(project, repo_id, default_branch, yaml_content):
 
 # ── Pipeline definition + run ─────────────────────────────────────────────────
 
+def _find_pipeline(project, name):
+    """Returns the existing pipeline dict if one with this name exists, else None."""
+    url = f"{BASE_URL}/{project}/_apis/pipelines?api-version={API_VERSION}"
+    pipelines = get_json(url).get("value", [])
+    return next((p for p in pipelines if p["name"] == name), None)
+
+
 def create_pipeline(project, repo_id, repo_name, yaml_path="azure-pipelines.yml"):
+    """Creates the pipeline definition, or returns the existing one if already present."""
+    pipeline_name = f"cytex-scan-{repo_name}"
+    existing = _find_pipeline(project, pipeline_name)
+    if existing:
+        return existing
+
     url = f"{BASE_URL}/{project}/_apis/pipelines?api-version={API_VERSION}"
     body = {
-        "name": f"cytex-scan-{repo_name}",
+        "name": pipeline_name,
         "folder": "\\",
         "configuration": {
             "type": "yaml",
