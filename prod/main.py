@@ -1,39 +1,132 @@
 from azure import (
-    get_latest_build,
+    get_projects,
+    get_repos,
+    push_pipeline_yaml,
+    create_pipeline,
+    queue_pipeline_run,
+    poll_build_completion,
     download_aibom_report,
-    download_grype_report
+    download_grype_report,
+    download_semgrep_report,
 )
-from constants import ORG, PROJECT
+from constants import ORG
+
+PIPELINE_YAML = """\
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- checkout: self
+
+- script: |
+    curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+  displayName: Install Grype
+
+- script: |
+    python3 -m pip install --upgrade pip
+    python3 -m pip install semgrep
+  displayName: Install Semgrep
+
+- script: |
+    python3 -m pip install --pre "cisco-aibom[agentic]==1.0.0rc2" langchain-groq
+  displayName: Install Cisco AIBOM
+
+- script: |
+    mkdir -p ~/.aibom/catalogs
+
+    curl -L \\
+      -o ~/.aibom/catalogs/aibom_catalog-1.0.0rc2.duckdb \\
+      https://github.com/cisco-ai-defense/aibom/releases/download/1.0.0rc2/aibom_catalog-1.0.0rc2.duckdb
+  displayName: Download Cisco Catalog
+
+- script: |
+    grype dir:. -o json > grype-report.json
+  displayName: Run Grype
+
+- script: |
+    semgrep --config=auto . --json > semgrep-report.json
+  displayName: Run Semgrep
+
+- script: |
+    cisco-aibom analyze . \\
+      -o cyclonedx \\
+      -O aibom-report.cdx.json \\
+      --llm-model llama-3.3-70b-versatile \\
+      --llm-provider groq \\
+      --llm-api-key "$(GROQ_API_KEY)"
+  displayName: Run Cisco AIBOM
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: grype-report.json
+    artifact: grype-report
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: semgrep-report.json
+    artifact: semgrep-report
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: aibom-report.cdx.json
+    artifact: aibom-report
+"""
+
+
+def scan_repo(project_name, repo):
+    repo_id = repo["id"]
+    repo_name = repo["name"]
+    default_branch = repo.get("defaultBranch", "refs/heads/main")
+
+    print(f"\n    Repo: {repo_name}")
+
+    push_pipeline_yaml(project_name, repo_id, default_branch, PIPELINE_YAML)
+    print(f"    YAML pushed to {default_branch.replace('refs/heads/', '')}")
+
+    pipeline = create_pipeline(project_name, repo_id, repo_name)
+    pipeline_id = pipeline["id"]
+    print(f"    Pipeline created: {pipeline_id}")
+
+    run = queue_pipeline_run(project_name, pipeline_id)
+    run_id = run["id"]
+    print(f"    Run queued: {run_id}")
+
+    completed = poll_build_completion(project_name, pipeline_id, run_id)
+    result = completed.get("result", "unknown")
+    print(f"    Build completed: {result}")
+
+    if result != "succeeded":
+        print(f"    Skipping artifact download (build {result})")
+        return
+
+    aibom_path = download_aibom_report(run_id, ORG, project_name, repo_name)
+    grype_path = download_grype_report(run_id, ORG, project_name, repo_name)
+    semgrep_path = download_semgrep_report(run_id, ORG, project_name, repo_name)
+
+    print(f"    AIBOM   : {aibom_path}")
+    print(f"    SBOM    : {grype_path}")
+    print(f"    Semgrep : {semgrep_path}")
 
 
 def main():
-    build = get_latest_build()
+    projects = get_projects()
+    print(f"Found {len(projects)} project(s)")
 
-    if not build:
-        raise Exception("No builds found")
+    for project in projects:
+        project_name = project["name"]
+        print(f"\nProject: {project_name}")
 
-    build_id = build["id"]
+        repos = get_repos(project_name)
+        print(f"  Found {len(repos)} repo(s)")
 
-    repo_name = build.get("repository", {}).get("name", "repo")
-
-    print("Build:", build_id)
-
-    aibom_path = download_aibom_report(
-        build_id,
-        ORG,
-        PROJECT,
-        repo_name
-    )
-
-    grype_path = download_grype_report(
-        build_id,
-        ORG,
-        PROJECT,
-        repo_name
-    )
-
-    print("AIBOM:", aibom_path)
-    print("SBOM :", grype_path)
+        for repo in repos:
+            try:
+                scan_repo(project_name, repo)
+            except Exception as e:
+                print(f"    ERROR [{repo['name']}]: {e}")
 
 
 if __name__ == "__main__":

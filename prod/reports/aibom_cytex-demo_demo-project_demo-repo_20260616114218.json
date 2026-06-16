@@ -215,7 +215,7 @@
     }
   ],
   "metadata": {
-    "timestamp": "2026-06-16T08:49:09.939018+00:00",
+    "timestamp": "2026-06-16T11:38:52.755888+00:00",
     "tools": [
       {
         "name": "cisco-aibom",
@@ -224,11 +224,11 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:d02818f0-4605-405f-8376-b9188caed3fa",
+  "serialNumber": "urn:uuid:92d56189-b71f-43a1-ba3c-dc50e67055e9",
   "version": 1,
   "vulnerabilities": [
     {
-      "bom-ref": "BomRef.6135125069207075.4438016169699558",
+      "bom-ref": "BomRef.3735735547235687.8800641877177844",
       "description": "env:ANTHROPIC_API_KEY \u2014 secret",
       "detail": "Secret reference: env:ANTHROPIC_API_KEY",
       "id": "aibom-secret-env:ANTHROPIC_API_KEY_/home/vsts/work/1/s/test.py_33",
@@ -251,7 +251,7 @@
       }
     },
     {
-      "bom-ref": "BomRef.754538523246594.2698381890006001",
+      "bom-ref": "BomRef.5947546928742381.9486558746101303",
       "description": "env:OPENAI_API_KEY \u2014 secret",
       "detail": "Secret reference: env:OPENAI_API_KEY",
       "id": "aibom-secret-env:OPENAI_API_KEY_/home/vsts/work/1/s/test.py_23",

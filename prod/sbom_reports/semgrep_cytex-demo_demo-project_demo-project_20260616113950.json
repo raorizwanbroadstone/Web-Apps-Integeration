@@ -1,0 +1,93 @@
+{
+  "version": "1.166.0",
+  "results": [],
+  "errors": [
+    {
+      "code": 3,
+      "level": "warn",
+      "type": "Syntax error",
+      "message": "Syntax error at line semgrep-report.json:1:\n missing element",
+      "path": "semgrep-report.json"
+    }
+  ],
+  "paths": {
+    "scanned": [
+      "azure-pipelines.yml",
+      "grype-report.json",
+      "semgrep-report.json"
+    ]
+  },
+  "time": {
+    "rules": [],
+    "rules_parse_time": 0.6284258365631104,
+    "profiling_times": {
+      "config_time": 1.503572940826416,
+      "core_time": 0.9524767398834229,
+      "ignores_time": 0.0017580986022949219,
+      "total_time": 2.4623239040374756
+    },
+    "parsing_time": {
+      "total_time": 0.0,
+      "per_file_time": {
+        "mean": 0.0,
+        "std_dev": 0.0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_files": []
+    },
+    "scanning_time": {
+      "total_time": 0.044451236724853516,
+      "per_file_time": {
+        "mean": 0.004939026302761502,
+        "std_dev": 6.969134740779454e-05
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_files": []
+    },
+    "matching_time": {
+      "total_time": 0.0,
+      "per_file_and_rule_time": {
+        "mean": 0.0,
+        "std_dev": 0.0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_rules_on_files": []
+    },
+    "tainting_time": {
+      "total_time": 0.0,
+      "per_def_and_rule_time": {
+        "mean": 0.0,
+        "std_dev": 0.0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_rules_on_defs": []
+    },
+    "fixpoint_timeouts": [],
+    "prefiltering": {
+      "project_level_time": 0.0,
+      "file_level_time": 0.0,
+      "rules_with_project_prefilters_ratio": 0.0,
+      "rules_with_file_prefilters_ratio": 0.8181818181818182,
+      "rules_selected_ratio": 0.18181818181818182,
+      "rules_matched_ratio": 0.18181818181818182
+    },
+    "targets": [],
+    "total_bytes": 0,
+    "max_memory_bytes": 755027136
+  },
+  "engine_requested": "OSS",
+  "skipped_rules": [],
+  "profiling_results": []
+}
