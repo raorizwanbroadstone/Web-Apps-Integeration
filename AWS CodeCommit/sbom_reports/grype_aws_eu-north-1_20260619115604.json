@@ -1,5 +1,4 @@
 {
-  "matches": [],
   "source": {
     "type": "directory",
     "target": "."
@@ -302,6 +301,7 @@
         }
       }
     },
-    "timestamp": "2026-06-19T11:22:00.268827717Z"
-  }
+    "timestamp": "2026-06-19T11:46:31.912150666Z"
+  },
+  "matches": []
 }

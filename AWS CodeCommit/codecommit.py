@@ -3,8 +3,7 @@ import botocore.exceptions
 import json
 import os
 import time
-from datetime import datetime, timezone
-from constants import AWS_REGION, GROQ_API_KEY, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME, REPORT_DIR, SBOM_DIR
+from constants import AWS_REGION, GROQ_API_KEY, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME
 
 codecommit_client = boto3.client("codecommit", region_name=AWS_REGION)
 codebuild_client = boto3.client("codebuild", region_name=AWS_REGION)
@@ -393,7 +392,8 @@ def _download_s3_json(bucket_name, s3_key):
         raise
 
 
-def _save_json(data, directory, filename):
+
+def save_json(data, directory, filename):
     os.makedirs(directory, exist_ok=True)
     file_path = os.path.join(directory, filename)
     with open(file_path, "w", encoding="utf-8") as output_file:
@@ -401,28 +401,16 @@ def _save_json(data, directory, filename):
     return file_path
 
 
-def download_aibom_report(build_id, region, repo_name, bucket_name=BUCKET_NAME):
+def fetch_aibom_report(build_id, bucket_name=BUCKET_NAME):
     s3_key = f"{_build_id_to_s3_prefix(build_id)}/aibom-report.cdx.json"
-    report_data = _download_s3_json(bucket_name, s3_key)
-    if report_data is None:
-        return None
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-    return _save_json(report_data, REPORT_DIR, f"aibom_aws_{region}_{repo_name}_{timestamp}.json")
+    return _download_s3_json(bucket_name, s3_key)
 
 
-def download_grype_report(build_id, region, repo_name, bucket_name=BUCKET_NAME):
+def fetch_grype_report(build_id, bucket_name=BUCKET_NAME):
     s3_key = f"{_build_id_to_s3_prefix(build_id)}/grype-report.json"
-    report_data = _download_s3_json(bucket_name, s3_key)
-    if report_data is None:
-        return None
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-    return _save_json(report_data, SBOM_DIR, f"grype_aws_{region}_{repo_name}_{timestamp}.json")
+    return _download_s3_json(bucket_name, s3_key)
 
 
-def download_semgrep_report(build_id, region, repo_name, bucket_name=BUCKET_NAME):
+def fetch_semgrep_report(build_id, bucket_name=BUCKET_NAME):
     s3_key = f"{_build_id_to_s3_prefix(build_id)}/semgrep-report.json"
-    report_data = _download_s3_json(bucket_name, s3_key)
-    if report_data is None:
-        return None
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-    return _save_json(report_data, SBOM_DIR, f"semgrep_aws_{region}_{repo_name}_{timestamp}.json")
+    return _download_s3_json(bucket_name, s3_key)

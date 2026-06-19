@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from codecommit import (
     get_repos,
     get_default_branch,
@@ -10,11 +11,12 @@ from codecommit import (
     start_pipeline_execution,
     poll_pipeline_completion,
     get_build_id_from_execution,
-    download_aibom_report,
-    download_grype_report,
-    download_semgrep_report,
+    fetch_aibom_report,
+    fetch_grype_report,
+    fetch_semgrep_report,
+    save_json,
 )
-from constants import AWS_REGION, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME
+from constants import AWS_REGION, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME, REPORT_DIR, SBOM_DIR
 
 BUILDSPEC_YAML = """\
 version: 0.2
@@ -51,6 +53,61 @@ artifacts:
 """
 
 
+# Merge helpers
+
+def _merge_aibom(reports):
+    """Merges multiple CycloneDX AIBOM reports into one.
+
+    bom-refs are prefixed with the repo name to prevent collisions across repos.
+    """
+    base = {k: v for k, v in reports[0]["data"].items() if k not in ("components", "dependencies", "vulnerabilities")}
+    base["components"] = []
+    base["dependencies"] = []
+    base["vulnerabilities"] = []
+
+    for entry in reports:
+        repo_name = entry["repo"]
+        report = entry["data"]
+
+        for component in report.get("components", []):
+            component = dict(component)
+            if "bom-ref" in component:
+                component["bom-ref"] = f"{repo_name}:{component['bom-ref']}"
+            base["components"].append(component)
+
+        for dep in report.get("dependencies", []):
+            dep = dict(dep)
+            if "ref" in dep:
+                dep["ref"] = f"{repo_name}:{dep['ref']}"
+            base["dependencies"].append(dep)
+
+        for vuln in report.get("vulnerabilities", []):
+            vuln = dict(vuln)
+            if "id" in vuln:
+                vuln["id"] = f"{repo_name}:{vuln['id']}"
+            base["vulnerabilities"].append(vuln)
+
+    return base
+
+
+def _merge_grype(reports):
+    base = {k: v for k, v in reports[0]["data"].items() if k != "matches"}
+    base["matches"] = []
+    for entry in reports:
+        base["matches"].extend(entry["data"].get("matches", []))
+    return base
+
+
+def _merge_semgrep(reports):
+    base = {k: v for k, v in reports[0]["data"].items() if k not in ("results", "errors")}
+    base["results"] = []
+    base["errors"] = []
+    for entry in reports:
+        base["results"].extend(entry["data"].get("results", []))
+        base["errors"].extend(entry["data"].get("errors", []))
+    return base
+
+
 def scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn):
     print(f"\n    Repo: {repo_name}")
 
@@ -73,21 +130,19 @@ def scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_a
     print(f"    Pipeline completed: {pipeline_status}")
 
     if pipeline_status != "Succeeded":
-        print(f"    Skipping artifact download (pipeline {pipeline_status})")
-        return
+        print(f"    Skipping artifact fetch (pipeline {pipeline_status})")
+        return None
 
     build_id = get_build_id_from_execution(pipeline_name, execution_id)
     if not build_id:
-        print(f"    Could not retrieve CodeBuild build ID from execution, skipping download")
-        return
+        print(f"    Could not retrieve CodeBuild build ID, skipping fetch")
+        return None
 
-    aibom_path = download_aibom_report(build_id, AWS_REGION, repo_name)
-    grype_path = download_grype_report(build_id, AWS_REGION, repo_name)
-    semgrep_path = download_semgrep_report(build_id, AWS_REGION, repo_name)
+    aibom_data = fetch_aibom_report(build_id)
+    grype_data = fetch_grype_report(build_id)
+    semgrep_data = fetch_semgrep_report(build_id)
 
-    print(f"    AIBOM   : {aibom_path}")
-    print(f"    SBOM    : {grype_path}")
-    print(f"    Semgrep : {semgrep_path}")
+    return {"aibom": aibom_data, "grype": grype_data, "semgrep": semgrep_data}
 
 
 def main():
@@ -97,19 +152,51 @@ def main():
     ensure_bucket(BUCKET_NAME)
     codebuild_role_arn = ensure_codebuild_role(CODEBUILD_ROLE_NAME)
     codepipeline_role_arn = ensure_codepipeline_role(CODEPIPELINE_ROLE_NAME)
-    print(f"  CodeBuild role  : {codebuild_role_arn}")
+    print(f"  CodeBuild role   : {codebuild_role_arn}")
     print(f"  CodePipeline role: {codepipeline_role_arn}")
 
     repos = get_repos()
     print(f"\nFound {len(repos)} repo(s) in CodeCommit ({AWS_REGION})")
 
+    aibom_reports = []
+    grype_reports = []
+    semgrep_reports = []
+
     for repo in repos:
         repo_name = repo["repositoryName"]
         try:
             default_branch = get_default_branch(repo_name)
-            scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn)
+            result = scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn)
+            if result:
+                if result["aibom"]:
+                    aibom_reports.append({"repo": repo_name, "data": result["aibom"]})
+                if result["grype"]:
+                    grype_reports.append({"repo": repo_name, "data": result["grype"]})
+                if result["semgrep"]:
+                    semgrep_reports.append({"repo": repo_name, "data": result["semgrep"]})
         except Exception as error:
             print(f"    ERROR [{repo_name}]: {error}")
+
+    if not any([aibom_reports, grype_reports, semgrep_reports]):
+        print("\nNo reports collected.")
+        return
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+
+    if aibom_reports:
+        merged_aibom = _merge_aibom(aibom_reports)
+        aibom_path = save_json(merged_aibom, REPORT_DIR, f"aibom_aws_{AWS_REGION}_{timestamp}.json")
+        print(f"\nAIBOM   : {aibom_path}")
+
+    if grype_reports:
+        merged_grype = _merge_grype(grype_reports)
+        grype_path = save_json(merged_grype, SBOM_DIR, f"grype_aws_{AWS_REGION}_{timestamp}.json")
+        print(f"SBOM    : {grype_path}")
+
+    if semgrep_reports:
+        merged_semgrep = _merge_semgrep(semgrep_reports)
+        semgrep_path = save_json(merged_semgrep, SBOM_DIR, f"semgrep_aws_{AWS_REGION}_{timestamp}.json")
+        print(f"Semgrep : {semgrep_path}")
 
 
 if __name__ == "__main__":

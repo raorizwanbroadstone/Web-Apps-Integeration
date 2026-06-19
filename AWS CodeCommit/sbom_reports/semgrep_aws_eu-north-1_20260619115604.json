@@ -1,31 +1,23 @@
 {
   "version": "1.167.0",
-  "results": [],
-  "errors": [
-    {
-      "code": 3,
-      "level": "warn",
-      "type": "Syntax error",
-      "message": "Syntax error at line semgrep-report.json:1:\n missing element",
-      "path": "semgrep-report.json"
-    }
-  ],
   "paths": {
     "scanned": [
-      "app.py",
       "buildspec.yml",
+      "file_1_rag_pipeline.py",
+      "file_2_ml_inference.py",
+      "file_3_multi_provider_agents.py",
       "grype-report.json",
       "semgrep-report.json"
     ]
   },
   "time": {
     "rules": [],
-    "rules_parse_time": 0.4920809268951416,
+    "rules_parse_time": 0.5440471172332764,
     "profiling_times": {
-      "config_time": 1.3549494743347168,
-      "core_time": 0.84417724609375,
-      "ignores_time": 0.0017049312591552734,
-      "total_time": 2.205310821533203
+      "config_time": 1.1244828701019287,
+      "core_time": 0.9300968647003174,
+      "ignores_time": 0.001791238784790039,
+      "total_time": 2.0609447956085205
     },
     "parsing_time": {
       "total_time": 0.0,
@@ -40,10 +32,10 @@
       "very_slow_files": []
     },
     "scanning_time": {
-      "total_time": 0.054474830627441406,
+      "total_time": 0.07349753379821777,
       "per_file_time": {
-        "mean": 0.00453956921895345,
-        "std_dev": 6.007261627713787e-05
+        "mean": 0.004083196322123209,
+        "std_dev": 5.1260409528531957e-05
       },
       "very_slow_stats": {
         "time_ratio": 0.0,
@@ -80,15 +72,32 @@
       "project_level_time": 0.0,
       "file_level_time": 0.0,
       "rules_with_project_prefilters_ratio": 0.0,
-      "rules_with_file_prefilters_ratio": 0.924892703862661,
-      "rules_selected_ratio": 0.0815450643776824,
-      "rules_matched_ratio": 0.0815450643776824
+      "rules_with_file_prefilters_ratio": 0.9608030592734226,
+      "rules_selected_ratio": 0.04684512428298279,
+      "rules_matched_ratio": 0.04684512428298279
     },
     "targets": [],
     "total_bytes": 0,
-    "max_memory_bytes": 768214464
+    "max_memory_bytes": 770115392
   },
   "engine_requested": "OSS",
   "skipped_rules": [],
-  "profiling_results": []
+  "profiling_results": [],
+  "results": [],
+  "errors": [
+    {
+      "code": 3,
+      "level": "warn",
+      "type": "Syntax error",
+      "message": "Syntax error at line semgrep-report.json:1:\n missing element",
+      "path": "semgrep-report.json"
+    },
+    {
+      "code": 3,
+      "level": "warn",
+      "type": "Syntax error",
+      "message": "Syntax error at line semgrep-report.json:1:\n missing element",
+      "path": "semgrep-report.json"
+    }
+  ]
 }
