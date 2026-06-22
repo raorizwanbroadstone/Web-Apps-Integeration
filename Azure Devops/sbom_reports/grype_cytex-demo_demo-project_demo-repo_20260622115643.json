@@ -28,8 +28,8 @@
           {
             "cve": "CVE-2026-45134",
             "epss": 0.00199,
-            "percentile": 0.09804,
-            "date": "2026-06-15"
+            "percentile": 0.09767,
+            "date": "2026-06-21"
           }
         ],
         "cwes": [
@@ -37,7 +37,7 @@
             "cve": "CVE-2026-45134",
             "cwe": "CWE-502",
             "source": "security-advisories@github.com",
-            "type": "Primary"
+            "type": "Secondary"
           }
         ],
         "fix": {
@@ -84,8 +84,8 @@
             {
               "cve": "CVE-2026-45134",
               "epss": 0.00199,
-              "percentile": 0.09804,
-              "date": "2026-06-15"
+              "percentile": 0.09767,
+              "date": "2026-06-21"
             }
           ],
           "cwes": [
@@ -93,7 +93,7 @@
               "cve": "CVE-2026-45134",
               "cwe": "CWE-502",
               "source": "security-advisories@github.com",
-              "type": "Primary"
+              "type": "Secondary"
             }
           ]
         }
@@ -181,8 +181,8 @@
           {
             "cve": "CVE-2026-27205",
             "epss": 0.00374,
-            "percentile": 0.28943,
-            "date": "2026-06-15"
+            "percentile": 0.28996,
+            "date": "2026-06-21"
           }
         ],
         "cwes": [
@@ -190,7 +190,7 @@
             "cve": "CVE-2026-27205",
             "cwe": "CWE-524",
             "source": "security-advisories@github.com",
-            "type": "Primary"
+            "type": "Secondary"
           }
         ],
         "fix": {
@@ -249,8 +249,8 @@
             {
               "cve": "CVE-2026-27205",
               "epss": 0.00374,
-              "percentile": 0.28943,
-              "date": "2026-06-15"
+              "percentile": 0.28996,
+              "date": "2026-06-21"
             }
           ],
           "cwes": [
@@ -258,7 +258,7 @@
               "cve": "CVE-2026-27205",
               "cwe": "CWE-524",
               "source": "security-advisories@github.com",
-              "type": "Primary"
+              "type": "Secondary"
             }
           ]
         }
@@ -348,8 +348,8 @@
           {
             "cve": "CVE-2026-25645",
             "epss": 0.00157,
-            "percentile": 0.05177,
-            "date": "2026-06-15"
+            "percentile": 0.05178,
+            "date": "2026-06-21"
           }
         ],
         "cwes": [
@@ -418,8 +418,8 @@
             {
               "cve": "CVE-2026-25645",
               "epss": 0.00157,
-              "percentile": 0.05177,
-              "date": "2026-06-15"
+              "percentile": 0.05178,
+              "date": "2026-06-21"
             }
           ],
           "cwes": [
@@ -473,6 +473,101 @@
           "cpe:2.3:a:python:requests:2.32.4:*:*:*:*:*:*:*"
         ],
         "purl": "pkg:pypi/requests@2.32.4",
+        "upstreams": []
+      }
+    },
+    {
+      "vulnerability": {
+        "id": "GHSA-gr75-jv2w-4656",
+        "dataSource": "https://github.com/advisories/GHSA-gr75-jv2w-4656",
+        "namespace": "github:language:python",
+        "severity": "Medium",
+        "urls": [
+          "https://github.com/langchain-ai/langchain/security/advisories/GHSA-gr75-jv2w-4656"
+        ],
+        "description": "LangChain: Path traversal and sandbox escape in LangChain file-search middleware and loaders",
+        "cvss": [
+          {
+            "type": "Secondary",
+            "version": "3.1",
+            "vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+            "metrics": {
+              "baseScore": 5.1,
+              "exploitabilityScore": 1.5,
+              "impactScore": 3.6
+            },
+            "vendorMetadata": {}
+          }
+        ],
+        "fix": {
+          "versions": [
+            "1.3.9"
+          ],
+          "state": "fixed",
+          "available": [
+            {
+              "version": "1.3.9",
+              "date": "2026-06-16",
+              "kind": "first-observed"
+            }
+          ]
+        },
+        "advisories": [],
+        "risk": 0
+      },
+      "relatedVulnerabilities": [],
+      "matchDetails": [
+        {
+          "type": "exact-direct-match",
+          "matcher": "python-matcher",
+          "searchedBy": {
+            "language": "python",
+            "namespace": "github:language:python",
+            "package": {
+              "name": "langchain",
+              "version": "0.3.26"
+            }
+          },
+          "found": {
+            "vulnerabilityID": "GHSA-gr75-jv2w-4656",
+            "versionConstraint": "<=1.3.8 (python)"
+          },
+          "fix": {
+            "suggestedVersion": "1.3.9"
+          }
+        }
+      ],
+      "artifact": {
+        "id": "0806feb81e1f3a4f",
+        "name": "langchain",
+        "version": "0.3.26",
+        "type": "python",
+        "locations": [
+          {
+            "path": "/requirements.txt",
+            "accessPath": "/requirements.txt",
+            "annotations": {
+              "evidence": "primary"
+            }
+          }
+        ],
+        "language": "python",
+        "licenses": [],
+        "cpes": [
+          "cpe:2.3:a:python-langchain:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python-langchain:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_langchain:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_langchain:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:langchain:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:langchain:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python-langchain:langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python_langchain:langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:python-langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:python_langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:langchain:langchain:0.3.26:*:*:*:*:*:*:*",
+          "cpe:2.3:a:python:langchain:0.3.26:*:*:*:*:*:*:*"
+        ],
+        "purl": "pkg:pypi/langchain@0.3.26",
         "upstreams": []
       }
     }
@@ -667,118 +762,118 @@
     "db": {
       "status": {
         "schemaVersion": "v6.1.7",
-        "from": "https://grype.anchore.io/databases/v6/vulnerability-db_v6.1.7_2026-06-16T01:05:09Z_1781597641.tar.zst?checksum=sha256%3Acbf01c6e554ae7d4b2c7245553ac8b236b65f33edf711562cd7f72803301aade",
-        "built": "2026-06-16T08:14:01Z",
+        "from": "https://grype.anchore.io/databases/v6/vulnerability-db_v6.1.7_2026-06-19T01:08:48Z_1782116450.tar.zst?checksum=sha256%3Ac2425c68e5d94b1d0eefb4c0d2d4e9288b33c10f2f2fe58ce45de9bb61875d66",
+        "built": "2026-06-22T08:20:50Z",
         "path": "/home/vsts/.cache/grype/db/6/vulnerability.db",
         "valid": true
       },
       "providers": {
         "alma": {
-          "captured": "2026-06-16T01:05:09Z",
-          "input": "xxh64:c1dfedac2cbe9d8b"
+          "captured": "2026-06-22T00:58:26Z",
+          "input": "xxh64:65706ea31ccddc7f"
         },
         "alpine": {
-          "captured": "2026-06-16T01:05:45Z",
-          "input": "xxh64:1f02dbaddc330a07"
+          "captured": "2026-06-22T00:58:29Z",
+          "input": "xxh64:80f0d0730f6274bd"
         },
         "amazon": {
-          "captured": "2026-06-16T01:05:16Z",
-          "input": "xxh64:348624924616aab8"
+          "captured": "2026-06-22T00:59:11Z",
+          "input": "xxh64:26950c5027e0a6eb"
         },
         "arch": {
-          "captured": "2026-06-16T01:05:33Z",
-          "input": "xxh64:d567b3f008de9476"
+          "captured": "2026-06-22T00:58:28Z",
+          "input": "xxh64:ae1086df702b7af2"
         },
         "bitnami": {
-          "captured": "2026-06-16T01:06:47Z",
-          "input": "xxh64:08b403708746eb00"
+          "captured": "2026-06-22T00:58:37Z",
+          "input": "xxh64:77bb216c83fb4097"
         },
         "chainguard": {
-          "captured": "2026-06-16T01:05:12Z",
-          "input": "xxh64:cb48ede164fa4be1"
+          "captured": "2026-06-22T00:58:32Z",
+          "input": "xxh64:7817af861afb3fd4"
         },
         "chainguard-libraries": {
-          "captured": "2026-06-16T01:05:50Z",
-          "input": "xxh64:64868fea514da158"
+          "captured": "2026-06-22T00:58:31Z",
+          "input": "xxh64:542d8fd3337a4917"
         },
         "debian": {
-          "captured": "2026-06-16T01:05:51Z",
-          "input": "xxh64:f41dfc4d13f13d65"
+          "captured": "2026-06-22T00:59:11Z",
+          "input": "xxh64:43e0df87c9a2c9f1"
         },
         "echo": {
-          "captured": "2026-06-16T01:05:29Z",
-          "input": "xxh64:17588cba4e38f883"
+          "captured": "2026-06-22T00:59:03Z",
+          "input": "xxh64:d57a2b957167d050"
         },
         "eol": {
-          "captured": "2026-06-16T01:05:42Z",
-          "input": "xxh64:71cde1cd18913367"
+          "captured": "2026-06-22T00:58:54Z",
+          "input": "xxh64:4d192059186a29b7"
         },
         "epss": {
-          "captured": "2026-06-16T01:05:09Z",
-          "input": "xxh64:4bfa3a1864480f65"
+          "captured": "2026-06-22T00:58:54Z",
+          "input": "xxh64:63486a2c06599715"
         },
         "fedora": {
-          "captured": "2026-06-16T01:05:23Z",
-          "input": "xxh64:8b04355df450374d"
+          "captured": "2026-06-22T00:58:55Z",
+          "input": "xxh64:2c0a2151120d702f"
         },
         "github": {
-          "captured": "2026-06-16T01:05:22Z",
-          "input": "xxh64:33f304531ca9d130"
+          "captured": "2026-06-22T00:59:07Z",
+          "input": "xxh64:cbe1cc1c1d135863"
         },
         "govulndb": {
-          "captured": "2026-06-16T01:05:54Z",
-          "input": "xxh64:748dc7fca6cee03f"
+          "captured": "2026-06-22T00:58:35Z",
+          "input": "xxh64:2cc2e9dbd37e889a"
         },
         "hummingbird": {
-          "captured": "2026-06-16T01:05:56Z",
-          "input": "xxh64:9d8bc9758a56754f"
+          "captured": "2026-06-22T00:59:32Z",
+          "input": "xxh64:be423f9e8f94415a"
         },
         "kev": {
-          "captured": "2026-06-16T01:06:14Z",
-          "input": "xxh64:9aad3eb4a329c4ad"
+          "captured": "2026-06-22T00:58:21Z",
+          "input": "xxh64:df894ceab9095bc2"
         },
         "mariner": {
-          "captured": "2026-06-16T01:05:21Z",
-          "input": "xxh64:2100f48d420b5e10"
+          "captured": "2026-06-22T00:58:27Z",
+          "input": "xxh64:b7e7b50a98df64b3"
         },
         "minimos": {
-          "captured": "2026-06-16T01:05:39Z",
-          "input": "xxh64:70ef4cf2f4264022"
+          "captured": "2026-06-22T00:58:52Z",
+          "input": "xxh64:38bae1533ca3d582"
         },
         "nvd": {
-          "captured": "2026-06-16T01:06:04Z",
-          "input": "xxh64:17cb8981831e7429"
+          "captured": "2026-06-21T16:41:49Z",
+          "input": "xxh64:9fd50eb5e52fec46"
         },
         "oracle": {
-          "captured": "2026-06-16T01:05:59Z",
-          "input": "xxh64:7e2de68a81f46d75"
+          "captured": "2026-06-22T00:59:08Z",
+          "input": "xxh64:fc2caae29241b034"
         },
         "photon": {
-          "captured": "2026-06-16T01:05:50Z",
-          "input": "xxh64:41ff466775ab73d0"
+          "captured": "2026-06-22T00:58:37Z",
+          "input": "xxh64:db9cce5b8472c7fb"
         },
         "rhel": {
-          "captured": "2026-06-16T01:06:28Z",
-          "input": "xxh64:f4d78f6141109edb"
+          "captured": "2026-06-21T16:42:12Z",
+          "input": "xxh64:796147da96a1cbae"
         },
         "secureos": {
-          "captured": "2026-06-16T01:05:51Z",
-          "input": "xxh64:45af8db863b753f7"
+          "captured": "2026-06-22T00:58:27Z",
+          "input": "xxh64:6da365be1f0d7bc1"
         },
         "sles": {
-          "captured": "2026-06-16T01:43:14Z",
-          "input": "xxh64:5e1966e81f842f6c"
+          "captured": "2026-06-21T00:58:39Z",
+          "input": "xxh64:d7c251ecc5afd143"
         },
         "ubuntu": {
-          "captured": "2026-06-16T01:46:02Z",
-          "input": "xxh64:cb938ef7f42b45b3"
+          "captured": "2026-06-19T01:08:48Z",
+          "input": "xxh64:71c1a6cf1bf7e431"
         },
         "wolfi": {
-          "captured": "2026-06-16T01:05:12Z",
-          "input": "xxh64:b23f701e22996665"
+          "captured": "2026-06-22T00:58:50Z",
+          "input": "xxh64:d27785261d1a66e9"
         }
       }
     },
-    "timestamp": "2026-06-16T11:38:41.759799162Z"
+    "timestamp": "2026-06-22T11:53:12.448470008Z"
   }
 }

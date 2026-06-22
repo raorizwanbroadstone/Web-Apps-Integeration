@@ -4,7 +4,6 @@ import os
 load_dotenv()
 
 ORG = os.getenv("AZURE_DEVOPS_ORG")
-PROJECT = os.getenv("AZURE_DEVOPS_PROJECT")
 PAT = os.getenv("AZURE_DEVOPS_PAT")
 
 API_VERSION = "7.1"

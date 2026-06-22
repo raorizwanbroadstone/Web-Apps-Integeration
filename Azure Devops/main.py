@@ -97,21 +97,21 @@ def scan_repo(project_name, repo):
     run_id = run["id"]
     print(f"    Run queued: {run_id}")
 
-    completed = poll_build_completion(project_name, pipeline_id, run_id)
-    result = completed.get("result", "unknown")
-    print(f"    Build completed: {result}")
+    completed_run = poll_build_completion(project_name, pipeline_id, run_id)
+    build_result = completed_run.get("result", "unknown")
+    print(f"    Build completed: {build_result}")
 
-    if result != "succeeded":
-        print(f"    Skipping artifact download (build {result})")
+    if build_result != "succeeded":
+        print(f"    Skipping artifact download (build {build_result})")
         return
 
     aibom_path = download_aibom_report(run_id, ORG, project_name, repo_name)
     grype_path = download_grype_report(run_id, ORG, project_name, repo_name)
     semgrep_path = download_semgrep_report(run_id, ORG, project_name, repo_name)
 
-    print(f"    AIBOM   : {aibom_path}")
-    print(f"    SBOM    : {grype_path}")
-    print(f"    Semgrep : {semgrep_path}")
+    print(f"    AIBOM:   {aibom_path}")
+    print(f"    Grype:   {grype_path}")
+    print(f"    Semgrep: {semgrep_path}")
 
 
 def main():
@@ -128,8 +128,8 @@ def main():
         for repo in repos:
             try:
                 scan_repo(project_name, repo)
-            except Exception as e:
-                print(f"    ERROR [{repo['name']}]: {e}")
+            except Exception as exception:
+                print(f"    Error [{repo['name']}]: {exception}")
 
 
 if __name__ == "__main__":

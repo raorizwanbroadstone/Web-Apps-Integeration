@@ -1,0 +1,387 @@
+{
+  "components": [
+    {
+      "bom-ref": "ChatPromptTemplate_/home/vsts/work/1/s/file1.py_16",
+      "description": "ChatPromptTemplate \u2014 prompt",
+      "name": "ChatPromptTemplate",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "16"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "prompt"
+        }
+      ],
+      "type": "application"
+    },
+    {
+      "bom-ref": "langchain.prompts.ChatPromptTemplate.from_messages_/home/vsts/work/1/s/file1.py_45",
+      "description": "langchain.prompts.ChatPromptTemplate.from_messages \u2014 prompt \u2014 langchain_core",
+      "name": "langchain.prompts.ChatPromptTemplate.from_messages",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "langchain_core"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "45"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "prompt"
+        }
+      ],
+      "type": "application"
+    },
+    {
+      "bom-ref": "claude-sonnet-4-6_/home/vsts/work/1/s/file1.py_35",
+      "description": "claude-sonnet-4-6 \u2014 model \u2014 unknown",
+      "name": "claude-sonnet-4-6",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "unknown"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "35"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "command-r-plus_/home/vsts/work/1/s/demo/newapp.py_69",
+      "description": "command-r-plus \u2014 model \u2014 cohere",
+      "name": "command-r-plus",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "cohere"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "69"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "distilbert-base-uncased-finetuned-sst-2-english_/home/vsts/work/1/s/file1.py_54",
+      "description": "distilbert-base-uncased-finetuned-sst-2-english \u2014 model \u2014 unknown",
+      "name": "distilbert-base-uncased-finetuned-sst-2-english",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "unknown"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "54"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "env:AZURE_OPENAI_DEPLOYMENT_/home/vsts/work/1/s/demo/newapp.py_43",
+      "description": "env:AZURE_OPENAI_DEPLOYMENT \u2014 model",
+      "name": "env:AZURE_OPENAI_DEPLOYMENT",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "43"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "env:AZURE_OPENAI_ENDPOINT_/home/vsts/work/1/s/demo/newapp.py_39",
+      "description": "env:AZURE_OPENAI_ENDPOINT \u2014 llm_endpoint",
+      "name": "env:AZURE_OPENAI_ENDPOINT",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "39"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gemini-2.5-flash_/home/vsts/work/1/s/demo/newapp.py_78",
+      "description": "gemini-2.5-flash \u2014 model \u2014 unknown",
+      "name": "gemini-2.5-flash",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "unknown"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "78"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gpt-4o_/home/vsts/work/1/s/file1.py_25",
+      "description": "gpt-4o \u2014 model \u2014 openai",
+      "name": "gpt-4o",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "openai"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "25"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gpt-4o-mini_/home/vsts/work/1/s/file1.py_44",
+      "description": "gpt-4o-mini \u2014 model \u2014 openai",
+      "name": "gpt-4o-mini",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "openai"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "44"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gpt2_/home/vsts/work/1/s/demo/newapp.py_97",
+      "description": "gpt2 \u2014 model \u2014 unknown",
+      "name": "gpt2",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "unknown"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "97"
+        }
+      ],
+      "type": "machine-learning-model"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "ChatPromptTemplate_/home/vsts/work/1/s/file1.py_16"
+    },
+    {
+      "ref": "claude-sonnet-4-6_/home/vsts/work/1/s/file1.py_35"
+    },
+    {
+      "ref": "command-r-plus_/home/vsts/work/1/s/demo/newapp.py_69"
+    },
+    {
+      "ref": "distilbert-base-uncased-finetuned-sst-2-english_/home/vsts/work/1/s/file1.py_54"
+    },
+    {
+      "ref": "env:AZURE_OPENAI_DEPLOYMENT_/home/vsts/work/1/s/demo/newapp.py_43"
+    },
+    {
+      "ref": "env:AZURE_OPENAI_ENDPOINT_/home/vsts/work/1/s/demo/newapp.py_39"
+    },
+    {
+      "ref": "gemini-2.5-flash_/home/vsts/work/1/s/demo/newapp.py_78"
+    },
+    {
+      "ref": "gpt-4o-mini_/home/vsts/work/1/s/file1.py_44"
+    },
+    {
+      "ref": "gpt-4o_/home/vsts/work/1/s/file1.py_25"
+    },
+    {
+      "ref": "gpt2_/home/vsts/work/1/s/demo/newapp.py_97"
+    },
+    {
+      "ref": "langchain.prompts.ChatPromptTemplate.from_messages_/home/vsts/work/1/s/file1.py_45"
+    }
+  ],
+  "metadata": {
+    "timestamp": "2026-06-22T11:55:43.323322+00:00",
+    "tools": [
+      {
+        "name": "cisco-aibom",
+        "vendor": "Cisco",
+        "version": "1.0.0rc2"
+      }
+    ]
+  },
+  "serialNumber": "urn:uuid:8c9b2ce2-f299-436d-ab64-3061f488fa15",
+  "version": 1,
+  "vulnerabilities": [
+    {
+      "bom-ref": "BomRef.546829300731892.34158225619683824",
+      "description": "env:ANTHROPIC_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:ANTHROPIC_API_KEY",
+      "id": "aibom-secret-env:ANTHROPIC_API_KEY_/home/vsts/work/1/s/file1.py_33",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "33"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    },
+    {
+      "bom-ref": "BomRef.4865989463461394.8609689419973863",
+      "description": "env:AZURE_OPENAI_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:AZURE_OPENAI_API_KEY",
+      "id": "aibom-secret-env:AZURE_OPENAI_API_KEY_/home/vsts/work/1/s/demo/newapp.py_37",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "37"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    },
+    {
+      "bom-ref": "BomRef.08207317500897715.9318420087246215",
+      "description": "env:COHERE_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:COHERE_API_KEY",
+      "id": "aibom-secret-env:COHERE_API_KEY_/home/vsts/work/1/s/demo/newapp.py_67",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "67"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    },
+    {
+      "bom-ref": "BomRef.37243376771715997.7771862606591508",
+      "description": "env:GOOGLE_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:GOOGLE_API_KEY",
+      "id": "aibom-secret-env:GOOGLE_API_KEY_/home/vsts/work/1/s/demo/newapp.py_28",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/demo/newapp.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "28"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    },
+    {
+      "bom-ref": "BomRef.19988361519952125.2206549731012457",
+      "description": "env:OPENAI_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:OPENAI_API_KEY",
+      "id": "aibom-secret-env:OPENAI_API_KEY_/home/vsts/work/1/s/file1.py_23",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/file1.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "23"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    }
+  ],
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6"
+}

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "timestamp": "2026-06-16T11:36:35.510905+00:00",
+    "timestamp": "2026-06-22T11:51:05.209483+00:00",
     "tools": [
       {
         "name": "cisco-aibom",
@@ -9,7 +9,7 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:73cdef71-1653-4f13-997d-7ca5065c7f77",
+  "serialNumber": "urn:uuid:9b07fcd1-13e7-489f-a942-28ac17ae210b",
   "version": 1,
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",

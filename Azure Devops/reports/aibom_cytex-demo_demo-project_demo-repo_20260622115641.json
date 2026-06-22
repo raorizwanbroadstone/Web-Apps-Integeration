@@ -21,30 +21,6 @@
       "type": "application"
     },
     {
-      "bom-ref": "langchain.prompts.ChatPromptTemplate.from_messages_/home/vsts/work/1/s/test.py_45",
-      "description": "langchain.prompts.ChatPromptTemplate.from_messages \u2014 prompt \u2014 langchain_core",
-      "name": "langchain.prompts.ChatPromptTemplate.from_messages",
-      "properties": [
-        {
-          "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
-        },
-        {
-          "name": "cisco-aibom:framework",
-          "value": "langchain_core"
-        },
-        {
-          "name": "cisco-aibom:line",
-          "value": "45"
-        },
-        {
-          "name": "cisco-aibom:type",
-          "value": "prompt"
-        }
-      ],
-      "type": "application"
-    },
-    {
       "bom-ref": "langchain_/home/vsts/work/1/s/requirements.txt_2",
       "description": "langchain \u2014 dependency",
       "name": "langchain",
@@ -202,9 +178,6 @@
       "ref": "gpt-4o_/home/vsts/work/1/s/test.py_25"
     },
     {
-      "ref": "langchain.prompts.ChatPromptTemplate.from_messages_/home/vsts/work/1/s/test.py_45"
-    },
-    {
       "ref": "langchain_/home/vsts/work/1/s/requirements.txt_2"
     },
     {
@@ -215,7 +188,7 @@
     }
   ],
   "metadata": {
-    "timestamp": "2026-06-16T11:38:52.755888+00:00",
+    "timestamp": "2026-06-22T11:53:21.679469+00:00",
     "tools": [
       {
         "name": "cisco-aibom",
@@ -224,11 +197,11 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:92d56189-b71f-43a1-ba3c-dc50e67055e9",
+  "serialNumber": "urn:uuid:95bc4901-700c-4658-8a32-36ae8dbd5e42",
   "version": 1,
   "vulnerabilities": [
     {
-      "bom-ref": "BomRef.3735735547235687.8800641877177844",
+      "bom-ref": "BomRef.7152173092538205.5800217509599063",
       "description": "env:ANTHROPIC_API_KEY \u2014 secret",
       "detail": "Secret reference: env:ANTHROPIC_API_KEY",
       "id": "aibom-secret-env:ANTHROPIC_API_KEY_/home/vsts/work/1/s/test.py_33",
@@ -251,7 +224,7 @@
       }
     },
     {
-      "bom-ref": "BomRef.5947546928742381.9486558746101303",
+      "bom-ref": "BomRef.2677557908274413.4429888294535508",
       "description": "env:OPENAI_API_KEY \u2014 secret",
       "detail": "Secret reference: env:OPENAI_API_KEY",
       "id": "aibom-secret-env:OPENAI_API_KEY_/home/vsts/work/1/s/test.py_23",
