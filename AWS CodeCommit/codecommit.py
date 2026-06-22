@@ -37,8 +37,8 @@ def get_repo_clone_url(repo_name):
 def ensure_bucket(bucket_name):
     try:
         s3_client.head_bucket(Bucket=bucket_name)
-    except botocore.exceptions.ClientError as error:
-        error_code = error.response["Error"]["Code"]
+    except botocore.exceptions.ClientError as client_error:
+        error_code = client_error.response["Error"]["Code"]
         if error_code == "404":
             if AWS_REGION == "us-east-1":
                 s3_client.create_bucket(Bucket=bucket_name)
@@ -65,7 +65,7 @@ def ensure_bucket(bucket_name):
 
 # IAM role for CodeBuild
 
-_CODEBUILD_TRUST_POLICY = json.dumps({
+CODEBUILD_TRUST_POLICY = json.dumps({
     "Version": "2012-10-17",
     "Statement": [{
         "Effect": "Allow",
@@ -74,7 +74,7 @@ _CODEBUILD_TRUST_POLICY = json.dumps({
     }],
 })
 
-_CODEBUILD_MANAGED_POLICIES = [
+CODEBUILD_MANAGED_POLICIES = [
     "arn:aws:iam::aws:policy/AWSCodeCommitReadOnly",
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
@@ -87,10 +87,10 @@ def ensure_codebuild_role(role_name=CODEBUILD_ROLE_NAME):
     except iam_client.exceptions.NoSuchEntityException:
         role_response = iam_client.create_role(
             RoleName=role_name,
-            AssumeRolePolicyDocument=_CODEBUILD_TRUST_POLICY,
+            AssumeRolePolicyDocument=CODEBUILD_TRUST_POLICY,
             Description="Service role for Cytex security scanning CodeBuild projects",
         )
-        for policy_arn in _CODEBUILD_MANAGED_POLICIES:
+        for policy_arn in CODEBUILD_MANAGED_POLICIES:
             iam_client.attach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
         print(f"  Created IAM role: {role_name} (waiting 10s for propagation)")
         time.sleep(10)
@@ -99,7 +99,7 @@ def ensure_codebuild_role(role_name=CODEBUILD_ROLE_NAME):
 
 # IAM role for CodePipeline
 
-_CODEPIPELINE_TRUST_POLICY = json.dumps({
+CODEPIPELINE_TRUST_POLICY = json.dumps({
     "Version": "2012-10-17",
     "Statement": [{
         "Effect": "Allow",
@@ -108,7 +108,7 @@ _CODEPIPELINE_TRUST_POLICY = json.dumps({
     }],
 })
 
-_CODEPIPELINE_INLINE_POLICY = json.dumps({
+CODEPIPELINE_INLINE_POLICY = json.dumps({
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -158,63 +158,69 @@ def ensure_codepipeline_role(role_name=CODEPIPELINE_ROLE_NAME):
     except iam_client.exceptions.NoSuchEntityException:
         role_response = iam_client.create_role(
             RoleName=role_name,
-            AssumeRolePolicyDocument=_CODEPIPELINE_TRUST_POLICY,
+            AssumeRolePolicyDocument=CODEPIPELINE_TRUST_POLICY,
             Description="Service role for Cytex security scanning CodePipeline pipelines",
         )
         iam_client.put_role_policy(
             RoleName=role_name,
             PolicyName="cytex-codepipeline-policy",
-            PolicyDocument=_CODEPIPELINE_INLINE_POLICY,
+            PolicyDocument=CODEPIPELINE_INLINE_POLICY,
         )
         print(f"  Created IAM role: {role_name} (waiting 10s for propagation)")
         time.sleep(10)
         return role_response["Role"]["Arn"]
 
 
-# Buildspec injection
+# Pipeline YAML injection
 
-def _get_existing_buildspec(repo_name, branch):
+def get_existing_buildspec(repo_name, branch):
+    """Returns the current content of cytex.yml, or None if the file does not exist."""
     try:
         file_response = codecommit_client.get_file(
             repositoryName=repo_name,
             commitSpecifier=branch,
-            filePath="buildspec.yml",
+            filePath="cytex.yml",
         )
         return file_response["fileContent"].decode("utf-8")
-    except botocore.exceptions.ClientError as error:
+    except botocore.exceptions.ClientError as client_error:
         not_found_codes = (
             "FileDoesNotExistException",
             "CommitDoesNotExistException",
             "BranchDoesNotExistException",
         )
-        if error.response["Error"]["Code"] in not_found_codes:
+        if client_error.response["Error"]["Code"] in not_found_codes:
             return None
         raise
 
 
-def _get_branch_head_commit(repo_name, branch):
+def get_branch_head_commit(repo_name, branch):
+    """Returns the current HEAD commit ID for the branch, or None if the branch does not exist."""
     try:
         branch_response = codecommit_client.get_branch(repositoryName=repo_name, branchName=branch)
         return branch_response["branch"]["commitId"]
-    except botocore.exceptions.ClientError as error:
-        if error.response["Error"]["Code"] == "BranchDoesNotExistException":
+    except botocore.exceptions.ClientError as client_error:
+        if client_error.response["Error"]["Code"] == "BranchDoesNotExistException":
             return None
         raise
 
 
 def push_buildspec(repo_name, branch, yaml_content):
-    existing_content = _get_existing_buildspec(repo_name, branch)
+    """Commits cytex.yml to the repository branch.
+
+    Returns None if the file already exists with identical content, skipping the commit.
+    """
+    existing_content = get_existing_buildspec(repo_name, branch)
     if existing_content is not None and existing_content.strip() == yaml_content.strip():
         return None
 
-    head_commit_id = _get_branch_head_commit(repo_name, branch)
+    head_commit_id = get_branch_head_commit(repo_name, branch)
 
     put_file_kwargs = {
         "repositoryName": repo_name,
         "branchName": branch,
         "fileContent": yaml_content.encode("utf-8"),
-        "filePath": "buildspec.yml",
-        "commitMessage": "Add security scanning buildspec [skip ci]",
+        "filePath": "cytex.yml",
+        "commitMessage": "Add Cytex security scanning pipeline [skip ci]",
     }
     if head_commit_id:
         put_file_kwargs["parentCommitId"] = head_commit_id
@@ -224,7 +230,8 @@ def push_buildspec(repo_name, branch, yaml_content):
 
 # CodeBuild project
 
-def _find_codebuild_project(project_name):
+def find_codebuild_project(project_name):
+    """Returns the existing CodeBuild project dict if found, else None."""
     batch_response = codebuild_client.batch_get_projects(names=[project_name])
     projects = batch_response.get("projects", [])
     return projects[0] if projects else None
@@ -232,21 +239,21 @@ def _find_codebuild_project(project_name):
 
 def create_codebuild_project(repo_name, role_arn, bucket_name=BUCKET_NAME):
     project_name = f"cytex-scan-{repo_name}"
-    existing_project = _find_codebuild_project(project_name)
+    existing_project = find_codebuild_project(project_name)
 
     if existing_project:
-        # Update source type if project was created before CodePipeline was added
+        # Update source configuration if the project predates the current pipeline setup
         if existing_project.get("source", {}).get("type") != "CODEPIPELINE":
             codebuild_client.update_project(
                 name=project_name,
-                source={"type": "CODEPIPELINE"},
+                source={"type": "CODEPIPELINE", "buildspec": "cytex.yml"},
                 artifacts={"type": "CODEPIPELINE"},
             )
         return existing_project
 
     create_response = codebuild_client.create_project(
         name=project_name,
-        source={"type": "CODEPIPELINE"},
+        source={"type": "CODEPIPELINE", "buildspec": "cytex.yml"},
         artifacts={"type": "CODEPIPELINE"},
         environment={
             "type": "LINUX_CONTAINER",
@@ -345,9 +352,9 @@ def poll_pipeline_completion(pipeline_name, execution_id, interval=15, timeout=1
                 pipelineName=pipeline_name,
                 pipelineExecutionId=execution_id,
             )
-        except botocore.exceptions.ClientError as error:
+        except botocore.exceptions.ClientError as client_error:
             # Execution may not be registered immediately after start_pipeline_execution
-            if error.response["Error"]["Code"] == "PipelineExecutionNotFoundException" and elapsed < 60:
+            if client_error.response["Error"]["Code"] == "PipelineExecutionNotFoundException" and elapsed < 60:
                 print(f"    [{elapsed}s] waiting for execution to register...")
                 time.sleep(interval)
                 elapsed += interval
@@ -377,20 +384,19 @@ def get_build_id_from_execution(pipeline_name, execution_id):
 
 # S3 artifact download
 
-def _build_id_to_s3_prefix(build_id):
-    # CodeBuild build IDs look like 'project-name:uuid'; buildspec uses tr ':' '/'
+def build_id_to_s3_prefix(build_id):
+    # CodeBuild build IDs look like 'project-name:uuid'; the buildspec converts ':' to '/' for the S3 path
     return build_id.replace(":", "/")
 
 
-def _download_s3_json(bucket_name, s3_key):
+def download_s3_json(bucket_name, s3_key):
     try:
         s3_response = s3_client.get_object(Bucket=bucket_name, Key=s3_key)
         return json.loads(s3_response["Body"].read().decode("utf-8"))
-    except botocore.exceptions.ClientError as error:
-        if error.response["Error"]["Code"] in ("NoSuchKey", "404"):
+    except botocore.exceptions.ClientError as client_error:
+        if client_error.response["Error"]["Code"] in ("NoSuchKey", "404"):
             return None
         raise
-
 
 
 def save_json(data, directory, filename):
@@ -402,15 +408,15 @@ def save_json(data, directory, filename):
 
 
 def fetch_aibom_report(build_id, bucket_name=BUCKET_NAME):
-    s3_key = f"{_build_id_to_s3_prefix(build_id)}/aibom-report.cdx.json"
-    return _download_s3_json(bucket_name, s3_key)
+    s3_key = f"{build_id_to_s3_prefix(build_id)}/aibom-report.cdx.json"
+    return download_s3_json(bucket_name, s3_key)
 
 
 def fetch_grype_report(build_id, bucket_name=BUCKET_NAME):
-    s3_key = f"{_build_id_to_s3_prefix(build_id)}/grype-report.json"
-    return _download_s3_json(bucket_name, s3_key)
+    s3_key = f"{build_id_to_s3_prefix(build_id)}/grype-report.json"
+    return download_s3_json(bucket_name, s3_key)
 
 
 def fetch_semgrep_report(build_id, bucket_name=BUCKET_NAME):
-    s3_key = f"{_build_id_to_s3_prefix(build_id)}/semgrep-report.json"
-    return _download_s3_json(bucket_name, s3_key)
+    s3_key = f"{build_id_to_s3_prefix(build_id)}/semgrep-report.json"
+    return download_s3_json(bucket_name, s3_key)

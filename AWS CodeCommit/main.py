@@ -53,61 +53,6 @@ artifacts:
 """
 
 
-# Merge helpers
-
-def _merge_aibom(reports):
-    """Merges multiple CycloneDX AIBOM reports into one.
-
-    bom-refs are prefixed with the repo name to prevent collisions across repos.
-    """
-    base = {k: v for k, v in reports[0]["data"].items() if k not in ("components", "dependencies", "vulnerabilities")}
-    base["components"] = []
-    base["dependencies"] = []
-    base["vulnerabilities"] = []
-
-    for entry in reports:
-        repo_name = entry["repo"]
-        report = entry["data"]
-
-        for component in report.get("components", []):
-            component = dict(component)
-            if "bom-ref" in component:
-                component["bom-ref"] = f"{repo_name}:{component['bom-ref']}"
-            base["components"].append(component)
-
-        for dep in report.get("dependencies", []):
-            dep = dict(dep)
-            if "ref" in dep:
-                dep["ref"] = f"{repo_name}:{dep['ref']}"
-            base["dependencies"].append(dep)
-
-        for vuln in report.get("vulnerabilities", []):
-            vuln = dict(vuln)
-            if "id" in vuln:
-                vuln["id"] = f"{repo_name}:{vuln['id']}"
-            base["vulnerabilities"].append(vuln)
-
-    return base
-
-
-def _merge_grype(reports):
-    base = {k: v for k, v in reports[0]["data"].items() if k != "matches"}
-    base["matches"] = []
-    for entry in reports:
-        base["matches"].extend(entry["data"].get("matches", []))
-    return base
-
-
-def _merge_semgrep(reports):
-    base = {k: v for k, v in reports[0]["data"].items() if k not in ("results", "errors")}
-    base["results"] = []
-    base["errors"] = []
-    for entry in reports:
-        base["results"].extend(entry["data"].get("results", []))
-        base["errors"].extend(entry["data"].get("errors", []))
-    return base
-
-
 def scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn):
     print(f"\n    Repo: {repo_name}")
 
@@ -131,72 +76,51 @@ def scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_a
 
     if pipeline_status != "Succeeded":
         print(f"    Skipping artifact fetch (pipeline {pipeline_status})")
-        return None
+        return
 
     build_id = get_build_id_from_execution(pipeline_name, execution_id)
     if not build_id:
         print(f"    Could not retrieve CodeBuild build ID, skipping fetch")
-        return None
+        return
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
 
     aibom_data = fetch_aibom_report(build_id)
-    grype_data = fetch_grype_report(build_id)
-    semgrep_data = fetch_semgrep_report(build_id)
+    if aibom_data:
+        aibom_path = save_json(aibom_data, REPORT_DIR, f"aibom_aws_{AWS_REGION}_{repo_name}_{timestamp}.json")
+        print(f"    AIBOM:   {aibom_path}")
 
-    return {"aibom": aibom_data, "grype": grype_data, "semgrep": semgrep_data}
+    grype_data = fetch_grype_report(build_id)
+    if grype_data:
+        grype_path = save_json(grype_data, SBOM_DIR, f"grype_aws_{AWS_REGION}_{repo_name}_{timestamp}.json")
+        print(f"    Grype:   {grype_path}")
+
+    semgrep_data = fetch_semgrep_report(build_id)
+    if semgrep_data:
+        semgrep_path = save_json(semgrep_data, SBOM_DIR, f"semgrep_aws_{AWS_REGION}_{repo_name}_{timestamp}.json")
+        print(f"    Semgrep: {semgrep_path}")
 
 
 def main():
-    print(f"Region : {AWS_REGION}")
-    print(f"Bucket : {BUCKET_NAME}")
+    print(f"Region: {AWS_REGION}")
+    print(f"Bucket: {BUCKET_NAME}")
 
     ensure_bucket(BUCKET_NAME)
     codebuild_role_arn = ensure_codebuild_role(CODEBUILD_ROLE_NAME)
     codepipeline_role_arn = ensure_codepipeline_role(CODEPIPELINE_ROLE_NAME)
-    print(f"  CodeBuild role   : {codebuild_role_arn}")
+    print(f"  CodeBuild role:    {codebuild_role_arn}")
     print(f"  CodePipeline role: {codepipeline_role_arn}")
 
     repos = get_repos()
     print(f"\nFound {len(repos)} repo(s) in CodeCommit ({AWS_REGION})")
 
-    aibom_reports = []
-    grype_reports = []
-    semgrep_reports = []
-
     for repo in repos:
         repo_name = repo["repositoryName"]
         try:
             default_branch = get_default_branch(repo_name)
-            result = scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn)
-            if result:
-                if result["aibom"]:
-                    aibom_reports.append({"repo": repo_name, "data": result["aibom"]})
-                if result["grype"]:
-                    grype_reports.append({"repo": repo_name, "data": result["grype"]})
-                if result["semgrep"]:
-                    semgrep_reports.append({"repo": repo_name, "data": result["semgrep"]})
-        except Exception as error:
-            print(f"    ERROR [{repo_name}]: {error}")
-
-    if not any([aibom_reports, grype_reports, semgrep_reports]):
-        print("\nNo reports collected.")
-        return
-
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-
-    if aibom_reports:
-        merged_aibom = _merge_aibom(aibom_reports)
-        aibom_path = save_json(merged_aibom, REPORT_DIR, f"aibom_aws_{AWS_REGION}_{timestamp}.json")
-        print(f"\nAIBOM   : {aibom_path}")
-
-    if grype_reports:
-        merged_grype = _merge_grype(grype_reports)
-        grype_path = save_json(merged_grype, SBOM_DIR, f"grype_aws_{AWS_REGION}_{timestamp}.json")
-        print(f"SBOM    : {grype_path}")
-
-    if semgrep_reports:
-        merged_semgrep = _merge_semgrep(semgrep_reports)
-        semgrep_path = save_json(merged_semgrep, SBOM_DIR, f"semgrep_aws_{AWS_REGION}_{timestamp}.json")
-        print(f"Semgrep : {semgrep_path}")
+            scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn)
+        except Exception as exception:
+            print(f"    Error [{repo_name}]: {exception}")
 
 
 if __name__ == "__main__":
