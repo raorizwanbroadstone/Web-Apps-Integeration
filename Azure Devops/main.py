@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from azure import (
     get_projects,
     get_repos,
@@ -119,13 +120,20 @@ def scan_repo(project_name, repo):
         print(f"    Skipping artifact download (build {build_result})")
         return
 
-    aibom_path = download_aibom_report(run_id, ORG, project_name, repo_name)
-    grype_path = download_grype_report(run_id, ORG, project_name, repo_name)
-    semgrep_path = download_semgrep_report(run_id, ORG, project_name, repo_name)
+    # One timestamp shared by all three reports so they sort together for the repo.
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
 
-    print(f"    AIBOM:   {aibom_path}")
-    print(f"    Grype:   {grype_path}")
-    print(f"    Semgrep: {semgrep_path}")
+    aibom_path = download_aibom_report(run_id, ORG, project_name, repo_name, timestamp)
+    if aibom_path:
+        print(f"    AIBOM:   {aibom_path}")
+
+    grype_path = download_grype_report(run_id, ORG, project_name, repo_name, timestamp)
+    if grype_path:
+        print(f"    Grype:   {grype_path}")
+
+    semgrep_path = download_semgrep_report(run_id, ORG, project_name, repo_name, timestamp)
+    if semgrep_path:
+        print(f"    Semgrep: {semgrep_path}")
 
 
 def main():

@@ -18,3 +18,7 @@ BASE_URL = f"https://dev.azure.com/{ORG}"
 
 REPORT_DIR = "reports"
 SBOM_DIR = "sbom_reports"
+
+# Shared naming
+RESOURCE_PREFIX = "cytex-scan"
+COMMIT_MESSAGE = "Add Cytex security scanning pipeline"

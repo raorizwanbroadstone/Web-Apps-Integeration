@@ -6,8 +6,15 @@ import io
 import json
 import zipfile
 import os
-from datetime import datetime, timezone
-from constants import BASE_URL, API_VERSION, PAT, REPORT_DIR, SBOM_DIR
+from constants import (
+    BASE_URL,
+    API_VERSION,
+    PAT,
+    REPORT_DIR,
+    SBOM_DIR,
+    RESOURCE_PREFIX,
+    COMMIT_MESSAGE,
+)
 
 AUTH = HTTPBasicAuth("", PAT)
 
@@ -31,6 +38,14 @@ def save_json_file(data, directory, filename):
     with open(path, "w", encoding="utf-8") as output_file:
         json.dump(data, output_file, indent=2)
     return path
+
+
+def scan_resource_name(repo_name):
+    """The name used for the per-repo pipeline definition.
+
+    Built from RESOURCE_PREFIX so the `cytex-scan-<repo>` convention lives in a single place.
+    """
+    return f"{RESOURCE_PREFIX}-{repo_name}"
 
 
 # Discovery
@@ -92,7 +107,7 @@ def push_pipeline_yaml(project, repo_id, default_branch, yaml_content):
     body = {
         "refUpdates": [{"name": f"refs/heads/{branch}", "oldObjectId": parent_sha}],
         "commits": [{
-            "comment": "Add security scanning pipeline",
+            "comment": COMMIT_MESSAGE,
             "changes": [{
                 "changeType": change_type,
                 "item": {"path": "/cytex.yml"},
@@ -119,7 +134,7 @@ def find_pipeline_by_name(project, name):
 
 def create_pipeline(project, repo_id, repo_name, yaml_path="cytex.yml"):
     """Creates the pipeline definition, or returns the existing one if already present."""
-    pipeline_name = f"cytex-scan-{repo_name}"
+    pipeline_name = scan_resource_name(repo_name)
     existing_pipeline = find_pipeline_by_name(project, pipeline_name)
     if existing_pipeline:
         return existing_pipeline
@@ -179,31 +194,19 @@ def poll_build_completion(project, pipeline_id, run_id, timeout=600):
     raise TimeoutError(f"Run {run_id} did not complete within {timeout}s")
 
 
-# Legacy single-project helpers retained for direct build inspection
-
-def get_builds(project):
-    url = f"{BASE_URL}/{project}/_apis/build/builds?api-version={API_VERSION}"
-    return fetch_json(url)
-
-
-def get_latest_build(project):
-    builds = get_builds(project).get("value", [])
-    return max(builds, key=lambda build: build["id"]) if builds else None
-
+# Artifact download
 
 def get_build_artifacts(build_id, project):
     url = f"{BASE_URL}/{project}/_apis/build/builds/{build_id}/artifacts?api-version={API_VERSION}"
     return fetch_json(url)
 
 
-# Artifact download
-
-def download_artifact_zip_as_json(build_id, project, artifact_name):
-    """Downloads a pipeline artifact ZIP and returns the first JSON file found inside it."""
+def download_report(build_id, project, artifact_name):
+    """Downloads a pipeline artifact ZIP and returns the first JSON file inside it, or None."""
     artifacts = get_build_artifacts(build_id, project).get("value", [])
     target_artifact = next((artifact for artifact in artifacts if artifact["name"] == artifact_name), None)
     if not target_artifact:
-        return None, None
+        return None
 
     response = requests.get(target_artifact["resource"]["downloadUrl"], auth=AUTH, timeout=120)
     response.raise_for_status()
@@ -211,33 +214,30 @@ def download_artifact_zip_as_json(build_id, project, artifact_name):
     with zipfile.ZipFile(io.BytesIO(response.content)) as zip_archive:
         json_filename = next((name for name in zip_archive.namelist() if name.endswith(".json")), None)
         if not json_filename:
-            return None, None
-        return json.loads(zip_archive.read(json_filename).decode("utf-8")), json_filename
+            return None
+        return json.loads(zip_archive.read(json_filename).decode("utf-8"))
 
 
-def download_aibom_report(build_id, organization, project, repo_name):
-    data, _ = download_artifact_zip_as_json(build_id, project, "aibom-report")
+# Each download_* function fetches one report and saves it locally, returning the saved path
+# (or None if the artifact is missing). The timestamp is passed in by the caller so all three
+# reports for a single repo share one timestamp instead of drifting between calls.
+
+def download_aibom_report(build_id, organization, project, repo_name, timestamp):
+    data = download_report(build_id, project, "aibom-report")
     if data is None:
         return None
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-    os.makedirs(REPORT_DIR, exist_ok=True)
-    path = os.path.join(REPORT_DIR, f"aibom_{organization}_{project}_{repo_name}_{timestamp}.json")
-    with open(path, "w", encoding="utf-8") as output_file:
-        json.dump(data, output_file, indent=2)
-    return path
+    return save_json_file(data, REPORT_DIR, f"aibom_azure_{organization}_{project}_{repo_name}_{timestamp}.json")
 
 
-def download_grype_report(build_id, organization, project, repo_name):
-    data, _ = download_artifact_zip_as_json(build_id, project, "grype-report")
+def download_grype_report(build_id, organization, project, repo_name, timestamp):
+    data = download_report(build_id, project, "grype-report")
     if data is None:
         return None
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-    return save_json_file(data, SBOM_DIR, f"grype_{organization}_{project}_{repo_name}_{timestamp}.json")
+    return save_json_file(data, SBOM_DIR, f"grype_azure_{organization}_{project}_{repo_name}_{timestamp}.json")
 
 
-def download_semgrep_report(build_id, organization, project, repo_name):
-    data, _ = download_artifact_zip_as_json(build_id, project, "semgrep-report")
+def download_semgrep_report(build_id, organization, project, repo_name, timestamp):
+    data = download_report(build_id, project, "semgrep-report")
     if data is None:
         return None
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-    return save_json_file(data, SBOM_DIR, f"semgrep_{organization}_{project}_{repo_name}_{timestamp}.json")
+    return save_json_file(data, SBOM_DIR, f"semgrep_azure_{organization}_{project}_{repo_name}_{timestamp}.json")

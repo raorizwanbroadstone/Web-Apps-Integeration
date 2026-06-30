@@ -4,7 +4,23 @@ import json
 import os
 import time
 from botocore.config import Config
-from constants import GROQ_API_KEY, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME
+from constants import (
+    GROQ_API_KEY,
+    CODEBUILD_ROLE_NAME,
+    CODEPIPELINE_ROLE_NAME,
+    REPORT_DIR,
+    SBOM_DIR,
+    RESOURCE_PREFIX,
+    COMMIT_MESSAGE,
+)
+
+
+def scan_resource_name(repo_name):
+    """The shared name used for the per-repo CodeBuild project and CodePipeline pipeline.
+
+    Built from RESOURCE_PREFIX so the `cytex-scan-<repo>` convention lives in a single place.
+    """
+    return f"{RESOURCE_PREFIX}-{repo_name}"
 
 CLIENT_CONFIG = Config(
     connect_timeout=10,
@@ -65,11 +81,6 @@ def get_repos():
 def get_default_branch(repo_name):
     repo_metadata = codecommit_client.get_repository(repositoryName=repo_name)["repositoryMetadata"]
     return repo_metadata.get("defaultBranch", "main")
-
-
-def get_repo_clone_url(repo_name):
-    repo_metadata = codecommit_client.get_repository(repositoryName=repo_name)["repositoryMetadata"]
-    return repo_metadata["cloneUrlHttp"]
 
 
 # S3 bucket
@@ -261,7 +272,7 @@ def push_buildspec(repo_name, branch, yaml_content):
         "branchName": branch,
         "fileContent": yaml_content.encode("utf-8"),
         "filePath": "cytex.yml",
-        "commitMessage": "Add Cytex security scanning pipeline",
+        "commitMessage": COMMIT_MESSAGE,
     }
     if head_commit_id:
         put_file_kwargs["parentCommitId"] = head_commit_id
@@ -278,46 +289,47 @@ def find_codebuild_project(project_name):
     return projects[0] if projects else None
 
 
-def build_environment(env_vars):
+def build_environment_config(environment_variables):
+    """Wraps the env-var list in the full CodeBuild environment block."""
     return {
         "type": "LINUX_CONTAINER",
         "image": "aws/codebuild/standard:7.0",
         "computeType": "BUILD_GENERAL1_MEDIUM",
-        "environmentVariables": env_vars,
+        "environmentVariables": environment_variables,
         "privilegedMode": False,
     }
 
 
-def sync_build_environment(bucket_name):
-    env_vars = [
+def build_environment_variables(bucket_name):
+    """The env vars the buildspec needs: the per-region report bucket and the Groq key for AIBOM."""
+    return [
         {"name": "BUCKET_NAME", "value": bucket_name, "type": "PLAINTEXT"},
         {"name": "GROQ_API_KEY", "value": GROQ_API_KEY, "type": "PLAINTEXT"},
     ]
-    return env_vars
 
 
-def create_codebuild_project(repo_name, role_arn, bucket_name=BUCKET_NAME):
-    project_name = f"cytex-scan-{repo_name}"
+def create_codebuild_project(repo_name, role_arn, bucket_name):
+    project_name = scan_resource_name(repo_name)
     existing_project = find_codebuild_project(project_name)
     if existing_project:
+        # Refresh only our managed vars (bucket + Groq key); leave any others intact.
         existing_env = existing_project.get("environment", {}).get("environmentVariables", [])
-        env_vars = [var for var in existing_env if var["name"] not in {"BUCKET_NAME", "GROQ_API_KEY"}]
-        env_vars.extend(sync_build_environment(bucket_name))
+        environment_variables = [var for var in existing_env if var["name"] not in {"BUCKET_NAME", "GROQ_API_KEY"}]
+        environment_variables.extend(build_environment_variables(bucket_name))
 
         codebuild_client.update_project(
             name=project_name,
             source={"type": "CODEPIPELINE", "buildspec": "cytex.yml"},
             artifacts={"type": "CODEPIPELINE"},
-            environment=build_environment(env_vars),
+            environment=build_environment_config(environment_variables),
         )
         return existing_project
 
-    # New project: set the local bucket name and Groq key for the AIBOM step.
     create_response = codebuild_client.create_project(
         name=project_name,
         source={"type": "CODEPIPELINE", "buildspec": "cytex.yml"},
         artifacts={"type": "CODEPIPELINE"},
-        environment=build_environment(sync_build_environment(bucket_name)),
+        environment=build_environment_config(build_environment_variables(bucket_name)),
         serviceRole=role_arn,
         timeoutInMinutes=30,
         logsConfig={
@@ -333,8 +345,8 @@ def create_codebuild_project(repo_name, role_arn, bucket_name=BUCKET_NAME):
 
 # CodePipeline
 
-def create_or_get_pipeline(repo_name, branch, pipeline_role_arn, artifact_bucket=BUCKET_NAME):
-    pipeline_name = f"cytex-scan-{repo_name}"
+def create_or_get_pipeline(repo_name, branch, pipeline_role_arn, artifact_bucket):
+    pipeline_name = scan_resource_name(repo_name)
 
     try:
         codepipeline_client.get_pipeline(name=pipeline_name)
@@ -380,7 +392,7 @@ def create_or_get_pipeline(repo_name, branch, pipeline_role_arn, artifact_bucket
                             "version": "1",
                         },
                         "configuration": {
-                            "ProjectName": f"cytex-scan-{repo_name}",
+                            "ProjectName": scan_resource_name(repo_name),
                         },
                         "inputArtifacts": [{"name": "SourceArtifact"}],
                         "outputArtifacts": [{"name": "BuildArtifact"}],
@@ -457,24 +469,40 @@ def download_s3_json(bucket_name, s3_key):
         raise
 
 
-def save_json(data, directory, filename):
+def save_json_file(data, directory, filename):
     os.makedirs(directory, exist_ok=True)
-    file_path = os.path.join(directory, filename)
-    with open(file_path, "w", encoding="utf-8") as output_file:
+    path = os.path.join(directory, filename)
+    with open(path, "w", encoding="utf-8") as output_file:
         json.dump(data, output_file, indent=2)
-    return file_path
+    return path
 
 
-def fetch_aibom_report(build_id, bucket_name=BUCKET_NAME):
-    s3_key = f"{build_id_to_s3_prefix(build_id)}/aibom-report.cdx.json"
+def download_report(build_id, bucket_name, artifact_filename):
+    """Reads a single report artifact from S3, or None if the build never produced it."""
+    s3_key = f"{build_id_to_s3_prefix(build_id)}/{artifact_filename}"
     return download_s3_json(bucket_name, s3_key)
 
 
-def fetch_grype_report(build_id, bucket_name=BUCKET_NAME):
-    s3_key = f"{build_id_to_s3_prefix(build_id)}/grype-report.json"
-    return download_s3_json(bucket_name, s3_key)
+# Each download_* function fetches one report and saves it locally, returning the saved path
+# (or None if the artifact is missing). The timestamp is passed in by the caller so all three
+# reports for a single repo share one timestamp instead of drifting between calls.
+
+def download_aibom_report(build_id, bucket_name, region, repo_name, timestamp):
+    data = download_report(build_id, bucket_name, "aibom-report.cdx.json")
+    if data is None:
+        return None
+    return save_json_file(data, REPORT_DIR, f"aibom_aws_{region}_{repo_name}_{timestamp}.json")
 
 
-def fetch_semgrep_report(build_id, bucket_name=BUCKET_NAME):
-    s3_key = f"{build_id_to_s3_prefix(build_id)}/semgrep-report.json"
-    return download_s3_json(bucket_name, s3_key)
+def download_grype_report(build_id, bucket_name, region, repo_name, timestamp):
+    data = download_report(build_id, bucket_name, "grype-report.json")
+    if data is None:
+        return None
+    return save_json_file(data, SBOM_DIR, f"grype_aws_{region}_{repo_name}_{timestamp}.json")
+
+
+def download_semgrep_report(build_id, bucket_name, region, repo_name, timestamp):
+    data = download_report(build_id, bucket_name, "semgrep-report.json")
+    if data is None:
+        return None
+    return save_json_file(data, SBOM_DIR, f"semgrep_aws_{region}_{repo_name}_{timestamp}.json")

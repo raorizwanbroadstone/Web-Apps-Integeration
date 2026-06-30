@@ -5,6 +5,7 @@ from codecommit import (
     get_codecommit_regions,
     get_repos,
     get_default_branch,
+    scan_resource_name,
     ensure_bucket,
     ensure_codebuild_role,
     ensure_codepipeline_role,
@@ -14,12 +15,11 @@ from codecommit import (
     start_pipeline_execution,
     poll_pipeline_completion,
     get_build_id_from_execution,
-    fetch_aibom_report,
-    fetch_grype_report,
-    fetch_semgrep_report,
-    save_json,
+    download_aibom_report,
+    download_grype_report,
+    download_semgrep_report,
 )
-from constants import BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME, REPORT_DIR, SBOM_DIR
+from constants import BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME
 
 BUILDSPEC_YAML = """\
 version: 0.2
@@ -66,7 +66,7 @@ def scan_repo(repo_name, default_branch, region, bucket_name, codebuild_role_arn
         print(f"    Buildspec pushed to {default_branch}")
 
     create_codebuild_project(repo_name, codebuild_role_arn, bucket_name)
-    print(f"    CodeBuild project ready: cytex-scan-{repo_name}")
+    print(f"    CodeBuild project ready: {scan_resource_name(repo_name)}")
 
     pipeline_name = create_or_get_pipeline(repo_name, default_branch, codepipeline_role_arn, bucket_name)
     print(f"    Pipeline ready: {pipeline_name}")
@@ -86,21 +86,19 @@ def scan_repo(repo_name, default_branch, region, bucket_name, codebuild_role_arn
         print(f"    Could not retrieve CodeBuild build ID, skipping fetch")
         return
 
+    # One timestamp shared by all three reports so they sort together for the repo.
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
 
-    aibom_data = fetch_aibom_report(build_id, bucket_name)
-    if aibom_data:
-        aibom_path = save_json(aibom_data, REPORT_DIR, f"aibom_aws_{region}_{repo_name}_{timestamp}.json")
+    aibom_path = download_aibom_report(build_id, bucket_name, region, repo_name, timestamp)
+    if aibom_path:
         print(f"    AIBOM:   {aibom_path}")
 
-    grype_data = fetch_grype_report(build_id, bucket_name)
-    if grype_data:
-        grype_path = save_json(grype_data, SBOM_DIR, f"grype_aws_{region}_{repo_name}_{timestamp}.json")
+    grype_path = download_grype_report(build_id, bucket_name, region, repo_name, timestamp)
+    if grype_path:
         print(f"    Grype:   {grype_path}")
 
-    semgrep_data = fetch_semgrep_report(build_id, bucket_name)
-    if semgrep_data:
-        semgrep_path = save_json(semgrep_data, SBOM_DIR, f"semgrep_aws_{region}_{repo_name}_{timestamp}.json")
+    semgrep_path = download_semgrep_report(build_id, bucket_name, region, repo_name, timestamp)
+    if semgrep_path:
         print(f"    Semgrep: {semgrep_path}")
 
 
