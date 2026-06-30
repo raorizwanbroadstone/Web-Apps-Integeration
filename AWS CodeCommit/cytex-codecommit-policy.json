@@ -1,0 +1,76 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DiscoverEnabledRegions",
+      "Effect": "Allow",
+      "Action": "ec2:DescribeRegions",
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodeCommitAccess",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:ListRepositories",
+        "codecommit:GetRepository",
+        "codecommit:GetBranch",
+        "codecommit:GetFile",
+        "codecommit:PutFile"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "S3ArtifactBucket",
+      "Effect": "Allow",
+      "Action": [
+        "s3:CreateBucket",
+        "s3:ListBucket",
+        "s3:PutBucketVersioning",
+        "s3:GetBucketVersioning",
+        "s3:GetBucketAcl",
+        "s3:GetBucketLocation",
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:PutObject"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodeBuildProjects",
+      "Effect": "Allow",
+      "Action": [
+        "codebuild:BatchGetProjects",
+        "codebuild:CreateProject",
+        "codebuild:UpdateProject"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CodePipeline",
+      "Effect": "Allow",
+      "Action": [
+        "codepipeline:GetPipeline",
+        "codepipeline:CreatePipeline",
+        "codepipeline:StartPipelineExecution",
+        "codepipeline:GetPipelineExecution",
+        "codepipeline:ListActionExecutions"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IAMServiceRoles",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetRole",
+        "iam:CreateRole",
+        "iam:AttachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:PassRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:role/cytex-codebuild-role",
+        "arn:aws:iam::*:role/cytex-codepipeline-role"
+      ]
+    }
+  ]
+}

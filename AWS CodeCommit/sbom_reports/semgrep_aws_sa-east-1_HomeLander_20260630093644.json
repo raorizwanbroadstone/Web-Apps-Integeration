@@ -1,0 +1,97 @@
+{
+  "version": "1.168.0",
+  "results": [],
+  "errors": [
+    {
+      "code": 3,
+      "level": "warn",
+      "type": "Syntax error",
+      "message": "Syntax error at line semgrep-report.json:1:\n missing element",
+      "path": "semgrep-report.json"
+    }
+  ],
+  "paths": {
+    "scanned": [
+      "cytex.yml",
+      "grype-report.json",
+      "semgrep-report.json",
+      "test1.py",
+      "test2.py",
+      "test3.py",
+      "test4.py"
+    ]
+  },
+  "time": {
+    "rules": [],
+    "rules_parse_time": 0.4939241409301758,
+    "profiling_times": {
+      "config_time": 1.5184969902038574,
+      "core_time": 0.8698890209197998,
+      "ignores_time": 0.0023567676544189453,
+      "total_time": 2.395369529724121
+    },
+    "parsing_time": {
+      "total_time": 0.0,
+      "per_file_time": {
+        "mean": 0.0,
+        "std_dev": 0.0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_files": []
+    },
+    "scanning_time": {
+      "total_time": 0.07701611518859863,
+      "per_file_time": {
+        "mean": 0.003667434056599935,
+        "std_dev": 3.198496497206511e-05
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_files": []
+    },
+    "matching_time": {
+      "total_time": 0.0,
+      "per_file_and_rule_time": {
+        "mean": 0.0,
+        "std_dev": 0.0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_rules_on_files": []
+    },
+    "tainting_time": {
+      "total_time": 0.0,
+      "per_def_and_rule_time": {
+        "mean": 0.0,
+        "std_dev": 0.0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0.0,
+        "count_ratio": 0.0
+      },
+      "very_slow_rules_on_defs": []
+    },
+    "fixpoint_timeouts": [],
+    "prefiltering": {
+      "project_level_time": 0.0,
+      "file_level_time": 0.0,
+      "rules_with_project_prefilters_ratio": 0.0,
+      "rules_with_file_prefilters_ratio": 0.9670658682634731,
+      "rules_selected_ratio": 0.035179640718562874,
+      "rules_matched_ratio": 0.035179640718562874
+    },
+    "targets": [],
+    "total_bytes": 0,
+    "max_memory_bytes": 760314944
+  },
+  "engine_requested": "OSS",
+  "skipped_rules": [],
+  "profiling_results": []
+}

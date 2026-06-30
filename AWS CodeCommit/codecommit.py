@@ -3,13 +3,53 @@ import botocore.exceptions
 import json
 import os
 import time
-from constants import AWS_REGION, GROQ_API_KEY, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME
+from botocore.config import Config
+from constants import GROQ_API_KEY, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME
 
-codecommit_client = boto3.client("codecommit", region_name=AWS_REGION)
-codebuild_client = boto3.client("codebuild", region_name=AWS_REGION)
-codepipeline_client = boto3.client("codepipeline", region_name=AWS_REGION)
-s3_client = boto3.client("s3", region_name=AWS_REGION)
-iam_client = boto3.client("iam")
+CLIENT_CONFIG = Config(
+    connect_timeout=10,
+    read_timeout=60,
+    retries={"max_attempts": 3, "mode": "adaptive"},
+)
+
+# IAM is a global service, so its client is region-independent and built once.
+iam_client = boto3.client("iam", config=CLIENT_CONFIG)
+
+# The remaining services are regional. Rather than locking to a single region from
+# .env, the clients are (re)built per region by configure_region() as main.py walks
+# every region the account uses. They start as None and must be configured before use.
+codecommit_client = None
+codebuild_client = None
+codepipeline_client = None
+s3_client = None
+
+
+def configure_region(region):
+    """Point all regional clients at the given region. Call before scanning that region."""
+    global codecommit_client, codebuild_client, codepipeline_client, s3_client
+    codecommit_client = boto3.client("codecommit", region_name=region, config=CLIENT_CONFIG)
+    codebuild_client = boto3.client("codebuild", region_name=region, config=CLIENT_CONFIG)
+    codepipeline_client = boto3.client("codepipeline", region_name=region, config=CLIENT_CONFIG)
+    s3_client = boto3.client("s3", region_name=region, config=CLIENT_CONFIG)
+
+
+def get_codecommit_regions():
+    """Returns the regions worth scanning: those that support CodeCommit and, where we
+    are allowed to find out, only the ones actually enabled for this account.
+    """
+    codecommit_supported = set(boto3.session.Session().get_available_regions("codecommit"))
+
+    ec2_client = boto3.client("ec2", region_name="us-east-1", config=CLIENT_CONFIG)
+    try:
+        enabled_regions = [region["RegionName"] for region in ec2_client.describe_regions()["Regions"]]
+    except botocore.exceptions.ClientError as client_error:
+        if client_error.response["Error"]["Code"] in ("UnauthorizedOperation", "AccessDenied", "AccessDeniedException"):
+            print("  (ec2:DescribeRegions not permitted -- probing all CodeCommit regions; "
+                  "grant it for a faster sweep)")
+            return sorted(codecommit_supported)
+        raise
+
+    return [region for region in enabled_regions if region in codecommit_supported]
 
 
 # Discovery
@@ -34,18 +74,19 @@ def get_repo_clone_url(repo_name):
 
 # S3 bucket
 
-def ensure_bucket(bucket_name):
+def ensure_bucket(bucket_name, region):
     try:
         s3_client.head_bucket(Bucket=bucket_name)
     except botocore.exceptions.ClientError as client_error:
         error_code = client_error.response["Error"]["Code"]
         if error_code == "404":
-            if AWS_REGION == "us-east-1":
+            # us-east-1 rejects a LocationConstraint; every other region requires it.
+            if region == "us-east-1":
                 s3_client.create_bucket(Bucket=bucket_name)
             else:
                 s3_client.create_bucket(
                     Bucket=bucket_name,
-                    CreateBucketConfiguration={"LocationConstraint": AWS_REGION},
+                    CreateBucketConfiguration={"LocationConstraint": region},
                 )
             print(f"  Created S3 bucket: {bucket_name}")
         elif error_code == "403":
@@ -220,7 +261,7 @@ def push_buildspec(repo_name, branch, yaml_content):
         "branchName": branch,
         "fileContent": yaml_content.encode("utf-8"),
         "filePath": "cytex.yml",
-        "commitMessage": "Add Cytex security scanning pipeline [skip ci]",
+        "commitMessage": "Add Cytex security scanning pipeline",
     }
     if head_commit_id:
         put_file_kwargs["parentCommitId"] = head_commit_id
@@ -237,34 +278,46 @@ def find_codebuild_project(project_name):
     return projects[0] if projects else None
 
 
+def build_environment(env_vars):
+    return {
+        "type": "LINUX_CONTAINER",
+        "image": "aws/codebuild/standard:7.0",
+        "computeType": "BUILD_GENERAL1_MEDIUM",
+        "environmentVariables": env_vars,
+        "privilegedMode": False,
+    }
+
+
+def sync_build_environment(bucket_name):
+    env_vars = [
+        {"name": "BUCKET_NAME", "value": bucket_name, "type": "PLAINTEXT"},
+        {"name": "GROQ_API_KEY", "value": GROQ_API_KEY, "type": "PLAINTEXT"},
+    ]
+    return env_vars
+
+
 def create_codebuild_project(repo_name, role_arn, bucket_name=BUCKET_NAME):
     project_name = f"cytex-scan-{repo_name}"
     existing_project = find_codebuild_project(project_name)
-
     if existing_project:
-        # Update source configuration if the project predates the current pipeline setup
-        if existing_project.get("source", {}).get("type") != "CODEPIPELINE":
-            codebuild_client.update_project(
-                name=project_name,
-                source={"type": "CODEPIPELINE", "buildspec": "cytex.yml"},
-                artifacts={"type": "CODEPIPELINE"},
-            )
+        existing_env = existing_project.get("environment", {}).get("environmentVariables", [])
+        env_vars = [var for var in existing_env if var["name"] not in {"BUCKET_NAME", "GROQ_API_KEY"}]
+        env_vars.extend(sync_build_environment(bucket_name))
+
+        codebuild_client.update_project(
+            name=project_name,
+            source={"type": "CODEPIPELINE", "buildspec": "cytex.yml"},
+            artifacts={"type": "CODEPIPELINE"},
+            environment=build_environment(env_vars),
+        )
         return existing_project
 
+    # New project: set the local bucket name and Groq key for the AIBOM step.
     create_response = codebuild_client.create_project(
         name=project_name,
         source={"type": "CODEPIPELINE", "buildspec": "cytex.yml"},
         artifacts={"type": "CODEPIPELINE"},
-        environment={
-            "type": "LINUX_CONTAINER",
-            "image": "aws/codebuild/standard:7.0",
-            "computeType": "BUILD_GENERAL1_MEDIUM",
-            "environmentVariables": [
-                {"name": "GROQ_API_KEY", "value": GROQ_API_KEY, "type": "PLAINTEXT"},
-                {"name": "BUCKET_NAME", "value": bucket_name, "type": "PLAINTEXT"},
-            ],
-            "privilegedMode": False,
-        },
+        environment=build_environment(sync_build_environment(bucket_name)),
         serviceRole=role_arn,
         timeoutInMinutes=30,
         logsConfig={
@@ -344,8 +397,12 @@ def start_pipeline_execution(pipeline_name):
     return response["pipelineExecutionId"]
 
 
-def poll_pipeline_completion(pipeline_name, execution_id, interval=15, timeout=1800):
-    elapsed = 0
+def poll_pipeline_completion(pipeline_name, execution_id, initial_delay=300, interval=60, timeout=1800):
+    # Wait initial_delay before the first status check, then poll every `interval` seconds.
+    print(f"    Waiting {initial_delay}s before first status check...")
+    time.sleep(initial_delay)
+    elapsed = initial_delay
+
     while elapsed < timeout:
         try:
             response = codepipeline_client.get_pipeline_execution(
@@ -354,7 +411,8 @@ def poll_pipeline_completion(pipeline_name, execution_id, interval=15, timeout=1
             )
         except botocore.exceptions.ClientError as client_error:
             # Execution may not be registered immediately after start_pipeline_execution
-            if client_error.response["Error"]["Code"] == "PipelineExecutionNotFoundException" and elapsed < 60:
+            if (client_error.response["Error"]["Code"] == "PipelineExecutionNotFoundException"
+                    and elapsed < initial_delay + 60):
                 print(f"    [{elapsed}s] waiting for execution to register...")
                 time.sleep(interval)
                 elapsed += interval

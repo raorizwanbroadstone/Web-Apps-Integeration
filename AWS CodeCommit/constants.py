@@ -3,11 +3,6 @@ import os
 
 load_dotenv()
 
-# boto3 automatically reads AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and
-# AWS_DEFAULT_REGION from the environment after load_dotenv() runs above.
-# You do not need to pass credentials to boto3 clients explicitly.
-
-AWS_REGION = os.getenv("AWS_DEFAULT_REGION", "us-east-1")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if not GROQ_API_KEY:

@@ -1,5 +1,8 @@
+import botocore.exceptions
 from datetime import datetime, timezone
 from codecommit import (
+    configure_region,
+    get_codecommit_regions,
     get_repos,
     get_default_branch,
     ensure_bucket,
@@ -16,7 +19,7 @@ from codecommit import (
     fetch_semgrep_report,
     save_json,
 )
-from constants import AWS_REGION, BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME, REPORT_DIR, SBOM_DIR
+from constants import BUCKET_NAME, CODEBUILD_ROLE_NAME, CODEPIPELINE_ROLE_NAME, REPORT_DIR, SBOM_DIR
 
 BUILDSPEC_YAML = """\
 version: 0.2
@@ -53,7 +56,7 @@ artifacts:
 """
 
 
-def scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn):
+def scan_repo(repo_name, default_branch, region, bucket_name, codebuild_role_arn, codepipeline_role_arn):
     print(f"\n    Repo: {repo_name}")
 
     pushed = push_buildspec(repo_name, default_branch, BUILDSPEC_YAML)
@@ -62,10 +65,10 @@ def scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_a
     else:
         print(f"    Buildspec pushed to {default_branch}")
 
-    create_codebuild_project(repo_name, codebuild_role_arn)
+    create_codebuild_project(repo_name, codebuild_role_arn, bucket_name)
     print(f"    CodeBuild project ready: cytex-scan-{repo_name}")
 
-    pipeline_name = create_or_get_pipeline(repo_name, default_branch, codepipeline_role_arn)
+    pipeline_name = create_or_get_pipeline(repo_name, default_branch, codepipeline_role_arn, bucket_name)
     print(f"    Pipeline ready: {pipeline_name}")
 
     execution_id = start_pipeline_execution(pipeline_name)
@@ -85,42 +88,74 @@ def scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_a
 
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
 
-    aibom_data = fetch_aibom_report(build_id)
+    aibom_data = fetch_aibom_report(build_id, bucket_name)
     if aibom_data:
-        aibom_path = save_json(aibom_data, REPORT_DIR, f"aibom_aws_{AWS_REGION}_{repo_name}_{timestamp}.json")
+        aibom_path = save_json(aibom_data, REPORT_DIR, f"aibom_aws_{region}_{repo_name}_{timestamp}.json")
         print(f"    AIBOM:   {aibom_path}")
 
-    grype_data = fetch_grype_report(build_id)
+    grype_data = fetch_grype_report(build_id, bucket_name)
     if grype_data:
-        grype_path = save_json(grype_data, SBOM_DIR, f"grype_aws_{AWS_REGION}_{repo_name}_{timestamp}.json")
+        grype_path = save_json(grype_data, SBOM_DIR, f"grype_aws_{region}_{repo_name}_{timestamp}.json")
         print(f"    Grype:   {grype_path}")
 
-    semgrep_data = fetch_semgrep_report(build_id)
+    semgrep_data = fetch_semgrep_report(build_id, bucket_name)
     if semgrep_data:
-        semgrep_path = save_json(semgrep_data, SBOM_DIR, f"semgrep_aws_{AWS_REGION}_{repo_name}_{timestamp}.json")
+        semgrep_path = save_json(semgrep_data, SBOM_DIR, f"semgrep_aws_{region}_{repo_name}_{timestamp}.json")
         print(f"    Semgrep: {semgrep_path}")
 
 
-def main():
-    print(f"Region: {AWS_REGION}")
-    print(f"Bucket: {BUCKET_NAME}")
+def scan_region(region, codebuild_role_arn, codepipeline_role_arn):
+    """Scans every CodeCommit repo in one region. Returns the number of repos scanned."""
+    configure_region(region)
 
-    ensure_bucket(BUCKET_NAME)
-    codebuild_role_arn = ensure_codebuild_role(CODEBUILD_ROLE_NAME)
-    codepipeline_role_arn = ensure_codepipeline_role(CODEPIPELINE_ROLE_NAME)
-    print(f"  CodeBuild role:    {codebuild_role_arn}")
-    print(f"  CodePipeline role: {codepipeline_role_arn}")
+    try:
+        repos = get_repos()
+    except botocore.exceptions.ClientError as client_error:
+        # Region is disabled for this account, or the keys lack access there -- skip it.
+        print(f"  [{region}] skipped: {client_error.response['Error']['Code']}")
+        return 0
+    except botocore.exceptions.ConnectionError as connection_error:
+        # Opt-in regions that are not enabled refuse/time out at the TCP level.
+        # ConnectionError is the botocore base for EndpointConnectionError and
+        # ConnectTimeoutError, so this catches both. Skip and keep going.
+        print(f"  [{region}] skipped: {type(connection_error).__name__}")
+        return 0
 
-    repos = get_repos()
-    print(f"\nFound {len(repos)} repo(s) in CodeCommit ({AWS_REGION})")
+    if not repos:
+        return 0
+
+    # CodePipeline requires its artifact bucket to live in the pipeline's region,
+    # so each region gets its own bucket suffixed with the region name.
+    bucket_name = f"{BUCKET_NAME}-{region}"
+    print(f"\nRegion {region}: {len(repos)} repo(s) | bucket {bucket_name}")
+    ensure_bucket(bucket_name, region)
 
     for repo in repos:
         repo_name = repo["repositoryName"]
         try:
             default_branch = get_default_branch(repo_name)
-            scan_repo(repo_name, default_branch, codebuild_role_arn, codepipeline_role_arn)
+            scan_repo(repo_name, default_branch, region, bucket_name, codebuild_role_arn, codepipeline_role_arn)
         except Exception as exception:
             print(f"    Error [{repo_name}]: {exception}")
+
+    return len(repos)
+
+
+def main():
+    # IAM is global, so the service roles are created once and reused across regions.
+    codebuild_role_arn = ensure_codebuild_role(CODEBUILD_ROLE_NAME)
+    codepipeline_role_arn = ensure_codepipeline_role(CODEPIPELINE_ROLE_NAME)
+    print(f"CodeBuild role:    {codebuild_role_arn}")
+    print(f"CodePipeline role: {codepipeline_role_arn}")
+
+    regions = get_codecommit_regions()
+    print(f"\nProbing {len(regions)} CodeCommit region(s) for repositories...")
+
+    total_repos = 0
+    for region in regions:
+        total_repos += scan_region(region, codebuild_role_arn, codepipeline_role_arn)
+
+    print(f"\nDone. Scanned {total_repos} repo(s) across all regions.")
 
 
 if __name__ == "__main__":

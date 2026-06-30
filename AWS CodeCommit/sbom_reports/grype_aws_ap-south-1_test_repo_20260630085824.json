@@ -1,0 +1,325 @@
+{
+  "matches": [],
+  "source": {
+    "type": "directory",
+    "target": "."
+  },
+  "distro": {
+    "name": "",
+    "version": "",
+    "idLike": null
+  },
+  "descriptor": {
+    "name": "grype",
+    "version": "0.115.0",
+    "configuration": {
+      "output": [
+        "json"
+      ],
+      "file": "",
+      "pretty": false,
+      "distro": "",
+      "add-cpes-if-none": false,
+      "output-template-file": "",
+      "check-for-app-update": true,
+      "only-fixed": false,
+      "only-notfixed": false,
+      "ignore-wontfix": "",
+      "platform": "",
+      "search": {
+        "scope": "squashed",
+        "unindexed-archives": false,
+        "indexed-archives": true
+      },
+      "ignore": [
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "kernel-headers",
+            "version": "",
+            "language": "",
+            "type": "rpm",
+            "location": "",
+            "upstream-name": "kernel"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        },
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "linux(-.*)?-headers-.*",
+            "version": "",
+            "language": "",
+            "type": "deb",
+            "location": "",
+            "upstream-name": "linux.*"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        },
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "linux-libc-dev",
+            "version": "",
+            "language": "",
+            "type": "deb",
+            "location": "",
+            "upstream-name": "linux"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        },
+        {
+          "vulnerability": "",
+          "include-aliases": false,
+          "reason": "",
+          "namespace": "",
+          "fix-state": "",
+          "package": {
+            "name": "linux-kbuild-.*",
+            "version": "",
+            "language": "",
+            "type": "deb",
+            "location": "",
+            "upstream-name": "linux.*"
+          },
+          "vex-status": "",
+          "vex-justification": "",
+          "match-type": "exact-indirect-match"
+        }
+      ],
+      "exclude": [],
+      "externalSources": {
+        "enable": false,
+        "maven": {
+          "searchUpstreamBySha1": true,
+          "baseUrl": "https://search.maven.org/solrsearch/select",
+          "rateLimit": 300000000
+        }
+      },
+      "match": {
+        "java": {
+          "using-cpes": false
+        },
+        "jvm": {
+          "using-cpes": true
+        },
+        "dotnet": {
+          "using-cpes": false
+        },
+        "golang": {
+          "using-cpes": false,
+          "always-use-cpe-for-stdlib": false,
+          "allow-main-module-pseudo-version-comparison": false
+        },
+        "javascript": {
+          "using-cpes": false
+        },
+        "python": {
+          "using-cpes": false
+        },
+        "ruby": {
+          "using-cpes": false
+        },
+        "rust": {
+          "using-cpes": false
+        },
+        "hex": {
+          "using-cpes": false
+        },
+        "stock": {
+          "using-cpes": true
+        },
+        "dpkg": {
+          "using-cpes": false,
+          "missing-epoch-strategy": "zero",
+          "use-cpes-for-eol": false
+        },
+        "rpm": {
+          "using-cpes": false,
+          "missing-epoch-strategy": "auto",
+          "use-cpes-for-eol": false
+        }
+      },
+      "fail-on-severity": "",
+      "registry": {
+        "insecure-skip-tls-verify": false,
+        "insecure-use-http": false,
+        "ca-cert": ""
+      },
+      "show-suppressed": false,
+      "by-cve": false,
+      "SortBy": {
+        "sort-by": "risk"
+      },
+      "name": "",
+      "default-image-pull-source": "",
+      "from": null,
+      "vex-documents": [],
+      "vex-add": [],
+      "match-upstream-kernel-headers": false,
+      "fix-channel": {
+        "redhat-eus": {
+          "apply": "auto",
+          "versions": ">= 8.0"
+        }
+      },
+      "timestamp": true,
+      "alerts": {
+        "enable-eol-distro-warnings": true
+      },
+      "db": {
+        "cache-dir": "/root/.cache/grype/db",
+        "update-url": "https://grype.anchore.io/databases",
+        "ca-cert": "",
+        "auto-update": true,
+        "validate-by-hash-on-start": true,
+        "validate-age": true,
+        "max-allowed-built-age": 432000000000000,
+        "require-update-check": false,
+        "update-available-timeout": 30000000000,
+        "update-download-timeout": 300000000000,
+        "max-update-check-frequency": 7200000000000
+      },
+      "exp": {},
+      "dev": {
+        "db": {
+          "debug": false
+        }
+      }
+    },
+    "db": {
+      "status": {
+        "schemaVersion": "v6.1.7",
+        "from": "https://grype.anchore.io/databases/v6/vulnerability-db_v6.1.7_2026-06-30T00:52:01Z_1782804886.tar.zst?checksum=sha256%3A5824f9dcad6f17fd5a8e27e3c1d2b61dfa09de885fec6a2013e507ff11d817a2",
+        "built": "2026-06-30T07:34:46Z",
+        "path": "/root/.cache/grype/db/6/vulnerability.db",
+        "valid": true
+      },
+      "providers": {
+        "alma": {
+          "captured": "2026-06-30T00:52:19Z",
+          "input": "xxh64:814e68e2efa06617"
+        },
+        "alpine": {
+          "captured": "2026-06-30T00:52:19Z",
+          "input": "xxh64:99b4b0842898f22e"
+        },
+        "amazon": {
+          "captured": "2026-06-30T00:52:03Z",
+          "input": "xxh64:44d29344561f3562"
+        },
+        "arch": {
+          "captured": "2026-06-30T00:52:09Z",
+          "input": "xxh64:432f067e29810840"
+        },
+        "bitnami": {
+          "captured": "2026-06-30T00:52:38Z",
+          "input": "xxh64:785a35e04482ddbf"
+        },
+        "chainguard": {
+          "captured": "2026-06-30T00:52:55Z",
+          "input": "xxh64:49bda40a5a7687d6"
+        },
+        "chainguard-libraries": {
+          "captured": "2026-06-30T00:52:18Z",
+          "input": "xxh64:de75547290d3a04c"
+        },
+        "debian": {
+          "captured": "2026-06-30T00:52:10Z",
+          "input": "xxh64:df7bc9a88d7ee7f4"
+        },
+        "echo": {
+          "captured": "2026-06-30T00:52:15Z",
+          "input": "xxh64:067b0b094a54b3f5"
+        },
+        "eol": {
+          "captured": "2026-06-30T00:52:23Z",
+          "input": "xxh64:1cdfcb9578fe1c1a"
+        },
+        "epss": {
+          "captured": "2026-06-30T00:52:15Z",
+          "input": "xxh64:c2f942b74dc703a0"
+        },
+        "fedora": {
+          "captured": "2026-06-30T00:52:29Z",
+          "input": "xxh64:3460c5a83783d908"
+        },
+        "github": {
+          "captured": "2026-06-30T00:52:22Z",
+          "input": "xxh64:4120f19260c7d184"
+        },
+        "govulndb": {
+          "captured": "2026-06-30T00:53:41Z",
+          "input": "xxh64:bddc4074045c6f53"
+        },
+        "hummingbird": {
+          "captured": "2026-06-30T00:52:28Z",
+          "input": "xxh64:289543d1db9c9bbd"
+        },
+        "kev": {
+          "captured": "2026-06-30T00:52:16Z",
+          "input": "xxh64:1b7068637befcede"
+        },
+        "mariner": {
+          "captured": "2026-06-30T00:52:12Z",
+          "input": "xxh64:e4804f3a45c4cf94"
+        },
+        "minimos": {
+          "captured": "2026-06-30T00:52:15Z",
+          "input": "xxh64:b94eb2b1c1d48a08"
+        },
+        "nvd": {
+          "captured": "2026-06-30T00:53:09Z",
+          "input": "xxh64:2d13b8f1b2d194fc"
+        },
+        "oracle": {
+          "captured": "2026-06-30T00:52:52Z",
+          "input": "xxh64:582bee51c2067ec0"
+        },
+        "photon": {
+          "captured": "2026-06-30T00:52:44Z",
+          "input": "xxh64:d7013daea6cb927e"
+        },
+        "rhel": {
+          "captured": "2026-06-30T00:53:18Z",
+          "input": "xxh64:b10e0cd319fdd5d6"
+        },
+        "secureos": {
+          "captured": "2026-06-30T00:52:14Z",
+          "input": "xxh64:849754839618fbb1"
+        },
+        "sles": {
+          "captured": "2026-06-30T00:52:55Z",
+          "input": "xxh64:3063a30b4981d835"
+        },
+        "ubuntu": {
+          "captured": "2026-06-30T00:57:51Z",
+          "input": "xxh64:847ac6401e9a498b"
+        },
+        "wolfi": {
+          "captured": "2026-06-30T00:52:01Z",
+          "input": "xxh64:34d244380c32a561"
+        }
+      }
+    },
+    "timestamp": "2026-06-30T08:52:37.83475911Z"
+  }
+}

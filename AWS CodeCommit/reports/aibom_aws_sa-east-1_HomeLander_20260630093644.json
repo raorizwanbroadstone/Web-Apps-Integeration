@@ -1,0 +1,203 @@
+{
+  "components": [
+    {
+      "bom-ref": "langchain_chroma.Chroma.from_texts_/codebuild/output/src3911470271/src/test4.py_19",
+      "description": "langchain_chroma.Chroma.from_texts \u2014 vector_store \u2014 langchain_community",
+      "name": "langchain_chroma.Chroma.from_texts",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test4.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "langchain_community"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "19"
+        }
+      ],
+      "type": "data"
+    },
+    {
+      "bom-ref": "OpenAIEmbeddings_/codebuild/output/src3911470271/src/test4.py_11",
+      "description": "OpenAIEmbeddings \u2014 embedding",
+      "name": "OpenAIEmbeddings",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test4.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "11"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gpt-4o_/codebuild/output/src3911470271/src/test3.py_15",
+      "description": "gpt-4o \u2014 model \u2014 openai",
+      "name": "gpt-4o",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test3.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "openai"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "15"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gpt-4o-mini_/codebuild/output/src3911470271/src/test4.py_25",
+      "description": "gpt-4o-mini \u2014 model \u2014 openai",
+      "name": "gpt-4o-mini",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test4.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "openai"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "25"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "gpt2_/codebuild/output/src3911470271/src/test2.py_13",
+      "description": "gpt2 \u2014 model \u2014 unknown",
+      "name": "gpt2",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test2.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "unknown"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "13"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "langchain_openai.OpenAIEmbeddings_/codebuild/output/src3911470271/src/test4.py_18",
+      "description": "langchain_openai.OpenAIEmbeddings \u2014 embedding \u2014 langchain_community",
+      "name": "langchain_openai.OpenAIEmbeddings",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test4.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "langchain_community"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "18"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "text-embedding-3-small_/codebuild/output/src3911470271/src/test4.py_18",
+      "description": "text-embedding-3-small \u2014 model \u2014 openai",
+      "name": "text-embedding-3-small",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test4.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "openai"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "18"
+        }
+      ],
+      "type": "machine-learning-model"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "OpenAIEmbeddings_/codebuild/output/src3911470271/src/test4.py_11"
+    },
+    {
+      "ref": "gpt-4o-mini_/codebuild/output/src3911470271/src/test4.py_25"
+    },
+    {
+      "ref": "gpt-4o_/codebuild/output/src3911470271/src/test3.py_15"
+    },
+    {
+      "ref": "gpt2_/codebuild/output/src3911470271/src/test2.py_13"
+    },
+    {
+      "ref": "langchain_chroma.Chroma.from_texts_/codebuild/output/src3911470271/src/test4.py_19"
+    },
+    {
+      "ref": "langchain_openai.OpenAIEmbeddings_/codebuild/output/src3911470271/src/test4.py_18"
+    },
+    {
+      "ref": "text-embedding-3-small_/codebuild/output/src3911470271/src/test4.py_18"
+    }
+  ],
+  "metadata": {
+    "timestamp": "2026-06-30T09:10:44.990220+00:00",
+    "tools": [
+      {
+        "name": "cisco-aibom",
+        "vendor": "Cisco",
+        "version": "1.0.0rc2"
+      }
+    ]
+  },
+  "serialNumber": "urn:uuid:8df111ae-f375-4aba-859c-6b509dad777d",
+  "version": 1,
+  "vulnerabilities": [
+    {
+      "bom-ref": "BomRef.7436540750136471.12481351668564211",
+      "description": "env:OPENAI_API_KEY \u2014 secret",
+      "detail": "Secret reference: env:OPENAI_API_KEY",
+      "id": "aibom-secret-env:OPENAI_API_KEY_/codebuild/output/src3911470271/src/test3.py_10",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/codebuild/output/src3911470271/src/test3.py"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "10"
+        },
+        {
+          "name": "cisco-aibom:type",
+          "value": "secret"
+        }
+      ],
+      "source": {
+        "name": "cisco-aibom"
+      }
+    }
+  ],
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6"
+}

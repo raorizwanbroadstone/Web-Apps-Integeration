@@ -1,16 +1,15 @@
 # AWS CodeCommit Automated Security Scanning Pipeline
 
-Scans every repository in your AWS CodeCommit account with a single command. No manual setup per repository required.
+Scans every CodeCommit repository across all regions enabled in your AWS account with a single command. No region config, no per-repository setup.
 
 ---
 
 ## What It Does
 
-1. Creates a shared S3 bucket and two IAM service roles on the first run (reused on every subsequent run)
-2. Discovers all CodeCommit repositories in the configured region
-3. Commits a `cytex.yml` pipeline definition into each repository
-4. Creates a CodeBuild project and CodePipeline pipeline per repository, then triggers a build
-5. Downloads scan results per repository to local directories once the build succeeds
+1. Creates two IAM service roles on the first run and reuses them afterwards
+2. Discovers every enabled region that supports CodeCommit
+3. For each region with repositories, creates a per-region S3 bucket, commits a `cytex.yml` pipeline into each repo, builds a CodeBuild project plus CodePipeline, and runs a scan
+4. Downloads the results to local folders once each build succeeds
 
 Each repository is scanned with three tools:
 
@@ -20,7 +19,7 @@ Each repository is scanned with three tools:
 | Semgrep | Code vulnerabilities and bad patterns | `semgrep-report.json` |
 | Cisco AIBOM | AI/ML components in the codebase | `aibom-report.cdx.json` |
 
-Reports are saved locally as timestamped JSON files under `reports/` (AIBOM) and `sbom_reports/` (Grype, Semgrep), one file per repository per tool.
+Reports are saved as timestamped JSON under `reports/` (AIBOM) and `sbom_reports/` (Grype, Semgrep), tagged with the region and repository name.
 
 ---
 
@@ -32,10 +31,9 @@ Reports are saved locally as timestamped JSON files under `reports/` (AIBOM) and
 pip install -r requirements.txt
 ```
 
-**`.env` file** in the `AWS Codecommit/` folder:
+**`.env` file** in this folder - only the access keys are needed. The region is auto-discovered, and the Groq key is read from this same `.env` file and pushed into CodeBuild automatically:
 
 ```env
-AWS_DEFAULT_REGION=us-east-1
 AWS_ACCESS_KEY_ID=your-access-key
 AWS_SECRET_ACCESS_KEY=your-secret-key
 GROQ_API_KEY=your-groq-api-key
@@ -51,78 +49,45 @@ CODEPIPELINE_ROLE_NAME=cytex-codepipeline-role
 
 ---
 
-## Step 1 — Create AWS Access Keys
+## Step 1 - Create the IAM Policy
 
-### Option A — Create a New IAM User (Recommended)
+The script provisions buckets, roles, and pipelines, so it needs write access. Use the least-privilege policy included in this folder.
 
-1. Go to **AWS Console → IAM → Users → Create user**
-2. Enter a username and click through to **Create user**
-3. Open the user → **Permissions tab → Add permissions → Attach policies directly**
-4. Search for and attach each of the following policies:
+1. Go to AWS Console -> IAM -> Policies -> Create policy
+2. Select the JSON tab and paste the full contents of `cytex-codecommit-policy.json`
+3. Click Next, name it `CytexCodeCommitScan`, and click Create policy
 
-| Policy | Required For |
-|--------|-------------|
-| `AWSCodeCommitFullAccess` | List repositories and commit `cytex.yml` |
-| `AWSCodeBuildAdminAccess` | Create and manage CodeBuild projects |
-| `AWSCodePipeline_FullAccess` | Create and execute pipelines |
-| `AmazonS3FullAccess` | Create the report bucket, enable versioning, upload/download results |
-| `IAMFullAccess` | Auto-create the CodeBuild and CodePipeline service roles |
-| `CloudWatchLogsFullAccess` | CodeBuild log group creation |
-
-5. Go to **Security credentials tab → Create access key**
-6. Select **Application running outside AWS** → click through to **Create access key**
-7. Copy the **Access key ID** → paste as `AWS_ACCESS_KEY_ID` in `.env`
-8. Copy the **Secret access key** → paste as `AWS_SECRET_ACCESS_KEY` in `.env`
-
-> The secret key is only shown once. Copy it immediately.
-
-### Option B — Use an Existing User
-
-Go to **IAM → Users → your user → Permissions tab** and attach the same policies listed above. Then go to **Security credentials → Create access key** to generate the key pair.
+> The policy includes `ec2:DescribeRegions` so the script scans only your enabled regions. It is optional - without it the script still works but probes all CodeCommit regions, which is slower.
 
 ---
 
-## Step 2 — Get a Groq API Key
+## Step 2 - Create the User and Access Keys
 
-1. Sign up or log in at [https://console.groq.com](https://console.groq.com)
-2. Go to **API Keys → Create API Key**
-3. Copy the key and paste it as `GROQ_API_KEY` in `.env`
-
-The Groq key is required by Cisco AIBOM for AI-assisted analysis. The script will exit immediately with a clear error if it is missing.
-
----
-
-## Step 3 — Create a CodeCommit Repository
-
-You need at least one repository before running the script.
-
-**Via AWS Console:** Go to **CodeCommit → Repositories → Create repository**, enter a name, and click **Create**.
-
-**Via AWS CLI:**
-```bash
-aws codecommit create-repository --repository-name your-repo --region us-east-1
-```
-
-The repository can be empty — the script creates the first commit when it pushes `cytex.yml`.
+1. Go to IAM -> Users -> Create user, set a username, click Next
+2. Choose Attach policies directly, search for `CytexCodeCommitScan`, select it, and create the user
+3. Open the user -> Security credentials -> Create access key
+4. Choose Application running outside AWS, click through to Create access key
+5. Copy the Access key ID into `AWS_ACCESS_KEY_ID` in `.env`
+6. Copy the Secret access key into `AWS_SECRET_ACCESS_KEY` in `.env` (shown only once)
+7. Add `GROQ_API_KEY` to `.env` if you want the AIBOM step to run successfully
 
 ---
 
-## What Gets Created Automatically
-
-The script auto-creates the following AWS resources on the first run and reuses them on every subsequent run:
-
-| Resource | Default Name | Purpose |
-|----------|-------------|---------|
-| S3 bucket | `cytex-security-scan-reports` | Stores raw scan reports uploaded by each CodeBuild run |
-| IAM role | `cytex-codebuild-role` | Allows CodeBuild to read from CodeCommit, write to S3, and publish logs |
-| IAM role | `cytex-codepipeline-role` | Allows CodePipeline to trigger CodeBuild and manage S3 artifacts |
-
----
-
-## Usage
+## Step 3 - Run the Script
 
 ```bash
 python main.py
 ```
 
-The script prints progress for each repository as it runs. A failed repository is logged and skipped — the rest continue scanning.
+The script prints progress per region and per repository. Disabled regions and failed repositories are skipped with a message; the rest continue.
+
+---
+
+## What Gets Created Automatically
+
+| Resource | Default Name | Purpose |
+|----------|-------------|---------|
+| IAM role | `cytex-codebuild-role` | Lets CodeBuild read CodeCommit, write S3, publish logs |
+| IAM role | `cytex-codepipeline-role` | Lets CodePipeline trigger CodeBuild and manage S3 artifacts |
+| S3 bucket | `cytex-security-scan-reports-<region>` | One per scanned region |
+
