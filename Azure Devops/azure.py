@@ -11,8 +11,7 @@ from constants import BASE_URL, API_VERSION, PAT, REPORT_DIR, SBOM_DIR
 
 AUTH = HTTPBasicAuth("", PAT)
 
-# Azure DevOps requires the old object ID when pushing to a branch.
-# This sentinel value is used when the branch does not yet exist.
+# Azure DevOps requires the old object ID when pushing to a branch.This sentinel value is used when the branch does not yet exist.
 ZERO_SHA = "0000000000000000000000000000000000000000"
 
 
@@ -93,7 +92,7 @@ def push_pipeline_yaml(project, repo_id, default_branch, yaml_content):
     body = {
         "refUpdates": [{"name": f"refs/heads/{branch}", "oldObjectId": parent_sha}],
         "commits": [{
-            "comment": "Add security scanning pipeline [skip ci]",
+            "comment": "Add security scanning pipeline",
             "changes": [{
                 "changeType": change_type,
                 "item": {"path": "/cytex.yml"},
@@ -157,16 +156,26 @@ def get_pipeline_run(project, pipeline_id, run_id):
     return fetch_json(url)
 
 
-def poll_build_completion(project, pipeline_id, run_id, interval=15, timeout=600):
+def poll_build_completion(project, pipeline_id, run_id, timeout=600):
     elapsed = 0
+    initial_interval = 100
+    followup_interval = 60
+
     while elapsed < timeout:
         run = get_pipeline_run(project, pipeline_id, run_id)
         state = run.get("state")
         if state == "completed":
             return run
-        print(f"    [{elapsed}s] run {run_id} -> {state}")
+
+        if elapsed == 0:
+            print(f"    run {run_id} -> {state}")
+        else:
+            print(f"    [{elapsed}s] run {run_id} -> {state}")
+
+        interval = initial_interval if elapsed == 0 else followup_interval
         time.sleep(interval)
         elapsed += interval
+
     raise TimeoutError(f"Run {run_id} did not complete within {timeout}s")
 
 

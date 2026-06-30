@@ -1,13 +1,13 @@
 {
   "components": [
     {
-      "bom-ref": "ChatPromptTemplate_/home/vsts/work/1/s/test.py_16",
+      "bom-ref": "ChatPromptTemplate_/home/vsts/work/1/s/1.py_16",
       "description": "ChatPromptTemplate \u2014 prompt",
       "name": "ChatPromptTemplate",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
+          "value": "/home/vsts/work/1/s/1.py"
         },
         {
           "name": "cisco-aibom:line",
@@ -21,73 +21,49 @@
       "type": "application"
     },
     {
-      "bom-ref": "langchain_/home/vsts/work/1/s/requirements.txt_2",
-      "description": "langchain \u2014 dependency",
-      "name": "langchain",
+      "bom-ref": "langchain_chroma.Chroma.from_texts_/home/vsts/work/1/s/2.py_19",
+      "description": "langchain_chroma.Chroma.from_texts \u2014 vector_store \u2014 langchain_community",
+      "name": "langchain_chroma.Chroma.from_texts",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/requirements.txt"
+          "value": "/home/vsts/work/1/s/2.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "langchain_community"
         },
         {
           "name": "cisco-aibom:line",
-          "value": "2"
-        },
-        {
-          "name": "cisco-aibom:type",
-          "value": "dependency"
+          "value": "19"
         }
       ],
-      "type": "library"
+      "type": "data"
     },
     {
-      "bom-ref": "openai_/home/vsts/work/1/s/requirements.txt_1",
-      "description": "openai \u2014 dependency",
-      "name": "openai",
+      "bom-ref": "OpenAIEmbeddings_/home/vsts/work/1/s/2.py_11",
+      "description": "OpenAIEmbeddings \u2014 embedding",
+      "name": "OpenAIEmbeddings",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/requirements.txt"
+          "value": "/home/vsts/work/1/s/2.py"
         },
         {
           "name": "cisco-aibom:line",
-          "value": "1"
-        },
-        {
-          "name": "cisco-aibom:type",
-          "value": "dependency"
+          "value": "11"
         }
       ],
-      "type": "library"
+      "type": "machine-learning-model"
     },
     {
-      "bom-ref": "sentence-transformers_/home/vsts/work/1/s/requirements.txt_3",
-      "description": "sentence-transformers \u2014 dependency",
-      "name": "sentence-transformers",
-      "properties": [
-        {
-          "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/requirements.txt"
-        },
-        {
-          "name": "cisco-aibom:line",
-          "value": "3"
-        },
-        {
-          "name": "cisco-aibom:type",
-          "value": "dependency"
-        }
-      ],
-      "type": "library"
-    },
-    {
-      "bom-ref": "claude-sonnet-4-6_/home/vsts/work/1/s/test.py_35",
+      "bom-ref": "claude-sonnet-4-6_/home/vsts/work/1/s/1.py_35",
       "description": "claude-sonnet-4-6 \u2014 model \u2014 unknown",
       "name": "claude-sonnet-4-6",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
+          "value": "/home/vsts/work/1/s/1.py"
         },
         {
           "name": "cisco-aibom:framework",
@@ -101,13 +77,13 @@
       "type": "machine-learning-model"
     },
     {
-      "bom-ref": "distilbert-base-uncased-finetuned-sst-2-english_/home/vsts/work/1/s/test.py_54",
+      "bom-ref": "distilbert-base-uncased-finetuned-sst-2-english_/home/vsts/work/1/s/1.py_54",
       "description": "distilbert-base-uncased-finetuned-sst-2-english \u2014 model \u2014 unknown",
       "name": "distilbert-base-uncased-finetuned-sst-2-english",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
+          "value": "/home/vsts/work/1/s/1.py"
         },
         {
           "name": "cisco-aibom:framework",
@@ -121,13 +97,13 @@
       "type": "machine-learning-model"
     },
     {
-      "bom-ref": "gpt-4o_/home/vsts/work/1/s/test.py_25",
+      "bom-ref": "gpt-4o_/home/vsts/work/1/s/1.py_25",
       "description": "gpt-4o \u2014 model \u2014 openai",
       "name": "gpt-4o",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
+          "value": "/home/vsts/work/1/s/1.py"
         },
         {
           "name": "cisco-aibom:framework",
@@ -141,13 +117,13 @@
       "type": "machine-learning-model"
     },
     {
-      "bom-ref": "gpt-4o-mini_/home/vsts/work/1/s/test.py_44",
+      "bom-ref": "gpt-4o-mini_/home/vsts/work/1/s/2.py_25",
       "description": "gpt-4o-mini \u2014 model \u2014 openai",
       "name": "gpt-4o-mini",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
+          "value": "/home/vsts/work/1/s/2.py"
         },
         {
           "name": "cisco-aibom:framework",
@@ -155,7 +131,47 @@
         },
         {
           "name": "cisco-aibom:line",
-          "value": "44"
+          "value": "25"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "langchain_openai.OpenAIEmbeddings_/home/vsts/work/1/s/2.py_18",
+      "description": "langchain_openai.OpenAIEmbeddings \u2014 embedding \u2014 langchain_community",
+      "name": "langchain_openai.OpenAIEmbeddings",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/2.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "langchain_community"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "18"
+        }
+      ],
+      "type": "machine-learning-model"
+    },
+    {
+      "bom-ref": "text-embedding-3-small_/home/vsts/work/1/s/2.py_18",
+      "description": "text-embedding-3-small \u2014 model \u2014 openai",
+      "name": "text-embedding-3-small",
+      "properties": [
+        {
+          "name": "cisco-aibom:file",
+          "value": "/home/vsts/work/1/s/2.py"
+        },
+        {
+          "name": "cisco-aibom:framework",
+          "value": "openai"
+        },
+        {
+          "name": "cisco-aibom:line",
+          "value": "18"
         }
       ],
       "type": "machine-learning-model"
@@ -163,32 +179,35 @@
   ],
   "dependencies": [
     {
-      "ref": "ChatPromptTemplate_/home/vsts/work/1/s/test.py_16"
+      "ref": "ChatPromptTemplate_/home/vsts/work/1/s/1.py_16"
     },
     {
-      "ref": "claude-sonnet-4-6_/home/vsts/work/1/s/test.py_35"
+      "ref": "OpenAIEmbeddings_/home/vsts/work/1/s/2.py_11"
     },
     {
-      "ref": "distilbert-base-uncased-finetuned-sst-2-english_/home/vsts/work/1/s/test.py_54"
+      "ref": "claude-sonnet-4-6_/home/vsts/work/1/s/1.py_35"
     },
     {
-      "ref": "gpt-4o-mini_/home/vsts/work/1/s/test.py_44"
+      "ref": "distilbert-base-uncased-finetuned-sst-2-english_/home/vsts/work/1/s/1.py_54"
     },
     {
-      "ref": "gpt-4o_/home/vsts/work/1/s/test.py_25"
+      "ref": "gpt-4o-mini_/home/vsts/work/1/s/2.py_25"
     },
     {
-      "ref": "langchain_/home/vsts/work/1/s/requirements.txt_2"
+      "ref": "gpt-4o_/home/vsts/work/1/s/1.py_25"
     },
     {
-      "ref": "openai_/home/vsts/work/1/s/requirements.txt_1"
+      "ref": "langchain_chroma.Chroma.from_texts_/home/vsts/work/1/s/2.py_19"
     },
     {
-      "ref": "sentence-transformers_/home/vsts/work/1/s/requirements.txt_3"
+      "ref": "langchain_openai.OpenAIEmbeddings_/home/vsts/work/1/s/2.py_18"
+    },
+    {
+      "ref": "text-embedding-3-small_/home/vsts/work/1/s/2.py_18"
     }
   ],
   "metadata": {
-    "timestamp": "2026-06-22T11:53:21.679469+00:00",
+    "timestamp": "2026-06-30T11:30:09.118296+00:00",
     "tools": [
       {
         "name": "cisco-aibom",
@@ -197,18 +216,18 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:95bc4901-700c-4658-8a32-36ae8dbd5e42",
+  "serialNumber": "urn:uuid:862fe799-9d9f-4ca4-ada7-b5441c4ab9a2",
   "version": 1,
   "vulnerabilities": [
     {
-      "bom-ref": "BomRef.7152173092538205.5800217509599063",
+      "bom-ref": "BomRef.45130537862552966.009973627344120217",
       "description": "env:ANTHROPIC_API_KEY \u2014 secret",
       "detail": "Secret reference: env:ANTHROPIC_API_KEY",
-      "id": "aibom-secret-env:ANTHROPIC_API_KEY_/home/vsts/work/1/s/test.py_33",
+      "id": "aibom-secret-env:ANTHROPIC_API_KEY_/home/vsts/work/1/s/1.py_33",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
+          "value": "/home/vsts/work/1/s/1.py"
         },
         {
           "name": "cisco-aibom:line",
@@ -224,18 +243,18 @@
       }
     },
     {
-      "bom-ref": "BomRef.2677557908274413.4429888294535508",
+      "bom-ref": "BomRef.1411818609564921.7650305155677188",
       "description": "env:OPENAI_API_KEY \u2014 secret",
       "detail": "Secret reference: env:OPENAI_API_KEY",
-      "id": "aibom-secret-env:OPENAI_API_KEY_/home/vsts/work/1/s/test.py_23",
+      "id": "aibom-secret-env:OPENAI_API_KEY_/home/vsts/work/1/s/2.py_14",
       "properties": [
         {
           "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/test.py"
+          "value": "/home/vsts/work/1/s/2.py"
         },
         {
           "name": "cisco-aibom:line",
-          "value": "23"
+          "value": "14"
         },
         {
           "name": "cisco-aibom:type",

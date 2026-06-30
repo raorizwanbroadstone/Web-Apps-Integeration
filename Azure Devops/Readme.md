@@ -38,6 +38,21 @@ AZURE_DEVOPS_ORG=your-organization-name
 AZURE_DEVOPS_PAT=your-personal-access-token
 ```
 
+This integration uses Azure DevOps PAT authentication only. You do not need an application ID, directory ID, or client secret for this flow.
+
+## Groq API Key Setup
+
+To let the pipeline run Cisco AIBOM, set `GROQ_API_KEY` in Azure DevOps as a secret variable:
+
+1. Create a variable group in `Pipelines` -> `Library`
+2. Add `GROQ_API_KEY`
+3. Mark it secret
+4. Link that variable group to the pipeline
+
+The pipeline passes this value into the job as an environment variable and the script reads it as `$GROQ_API_KEY`.
+
+The pipeline also includes a safe debug step that confirms the variable is present in the job without printing the secret itself.
+
 ---
 
 ## How to Create a PAT

@@ -35,6 +35,18 @@ steps:
   displayName: Install Cisco AIBOM
 
 - script: |
+    if [ -z "$GROQ_API_KEY" ]; then
+      echo "GROQ_API_KEY is missing"
+      exit 1
+    fi
+
+    echo "GROQ_API_KEY is available"
+    echo "GROQ_API_KEY length: ${#GROQ_API_KEY}"
+  displayName: Verify Groq API Key
+  env:
+    GROQ_API_KEY: $(GROQ_API_KEY)
+
+- script: |
     mkdir -p ~/.aibom/catalogs
 
     curl -L \\
@@ -56,8 +68,10 @@ steps:
       -O aibom-report.cdx.json \\
       --llm-model llama-3.3-70b-versatile \\
       --llm-provider groq \\
-      --llm-api-key "$(GROQ_API_KEY)"
+      --llm-api-key "$GROQ_API_KEY"
   displayName: Run Cisco AIBOM
+  env:
+    GROQ_API_KEY: $(GROQ_API_KEY)
 
 - task: PublishPipelineArtifact@1
   inputs:

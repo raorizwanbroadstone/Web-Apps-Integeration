@@ -21,30 +21,6 @@
       "type": "application"
     },
     {
-      "bom-ref": "langchain.prompts.ChatPromptTemplate.from_messages_/home/vsts/work/1/s/file1.py_45",
-      "description": "langchain.prompts.ChatPromptTemplate.from_messages \u2014 prompt \u2014 langchain_core",
-      "name": "langchain.prompts.ChatPromptTemplate.from_messages",
-      "properties": [
-        {
-          "name": "cisco-aibom:file",
-          "value": "/home/vsts/work/1/s/file1.py"
-        },
-        {
-          "name": "cisco-aibom:framework",
-          "value": "langchain_core"
-        },
-        {
-          "name": "cisco-aibom:line",
-          "value": "45"
-        },
-        {
-          "name": "cisco-aibom:type",
-          "value": "prompt"
-        }
-      ],
-      "type": "application"
-    },
-    {
       "bom-ref": "claude-sonnet-4-6_/home/vsts/work/1/s/file1.py_35",
       "description": "claude-sonnet-4-6 \u2014 model \u2014 unknown",
       "name": "claude-sonnet-4-6",
@@ -247,13 +223,10 @@
     },
     {
       "ref": "gpt2_/home/vsts/work/1/s/demo/newapp.py_97"
-    },
-    {
-      "ref": "langchain.prompts.ChatPromptTemplate.from_messages_/home/vsts/work/1/s/file1.py_45"
     }
   ],
   "metadata": {
-    "timestamp": "2026-06-22T11:55:43.323322+00:00",
+    "timestamp": "2026-06-30T11:21:54.908238+00:00",
     "tools": [
       {
         "name": "cisco-aibom",
@@ -262,11 +235,11 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:8c9b2ce2-f299-436d-ab64-3061f488fa15",
+  "serialNumber": "urn:uuid:4fd934a7-1ca5-46be-b8af-5df43ca10590",
   "version": 1,
   "vulnerabilities": [
     {
-      "bom-ref": "BomRef.546829300731892.34158225619683824",
+      "bom-ref": "BomRef.5499190927817952.6600232905323618",
       "description": "env:ANTHROPIC_API_KEY \u2014 secret",
       "detail": "Secret reference: env:ANTHROPIC_API_KEY",
       "id": "aibom-secret-env:ANTHROPIC_API_KEY_/home/vsts/work/1/s/file1.py_33",
@@ -289,7 +262,7 @@
       }
     },
     {
-      "bom-ref": "BomRef.4865989463461394.8609689419973863",
+      "bom-ref": "BomRef.7447974764428423.4025888563741419",
       "description": "env:AZURE_OPENAI_API_KEY \u2014 secret",
       "detail": "Secret reference: env:AZURE_OPENAI_API_KEY",
       "id": "aibom-secret-env:AZURE_OPENAI_API_KEY_/home/vsts/work/1/s/demo/newapp.py_37",
@@ -312,7 +285,7 @@
       }
     },
     {
-      "bom-ref": "BomRef.08207317500897715.9318420087246215",
+      "bom-ref": "BomRef.4762799702663356.08488307017992325",
       "description": "env:COHERE_API_KEY \u2014 secret",
       "detail": "Secret reference: env:COHERE_API_KEY",
       "id": "aibom-secret-env:COHERE_API_KEY_/home/vsts/work/1/s/demo/newapp.py_67",
@@ -335,7 +308,7 @@
       }
     },
     {
-      "bom-ref": "BomRef.37243376771715997.7771862606591508",
+      "bom-ref": "BomRef.3453922717091156.5885528831082821",
       "description": "env:GOOGLE_API_KEY \u2014 secret",
       "detail": "Secret reference: env:GOOGLE_API_KEY",
       "id": "aibom-secret-env:GOOGLE_API_KEY_/home/vsts/work/1/s/demo/newapp.py_28",
@@ -358,7 +331,7 @@
       }
     },
     {
-      "bom-ref": "BomRef.19988361519952125.2206549731012457",
+      "bom-ref": "BomRef.9447563923509533.5879152738867439",
       "description": "env:OPENAI_API_KEY \u2014 secret",
       "detail": "Secret reference: env:OPENAI_API_KEY",
       "id": "aibom-secret-env:OPENAI_API_KEY_/home/vsts/work/1/s/file1.py_23",

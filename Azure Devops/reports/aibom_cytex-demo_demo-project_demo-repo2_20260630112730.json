@@ -69,7 +69,7 @@
     }
   ],
   "metadata": {
-    "timestamp": "2026-06-22T11:57:43.863107+00:00",
+    "timestamp": "2026-06-30T11:25:54.998330+00:00",
     "tools": [
       {
         "name": "cisco-aibom",
@@ -78,11 +78,11 @@
       }
     ]
   },
-  "serialNumber": "urn:uuid:5bd016ac-974f-4345-92ff-d7ff9a062e39",
+  "serialNumber": "urn:uuid:ccb9f29d-eaae-403f-858c-2584c89e88df",
   "version": 1,
   "vulnerabilities": [
     {
-      "bom-ref": "BomRef.3789878416291479.7809511033939639",
+      "bom-ref": "BomRef.5816386318577098.7211322095757758",
       "description": "env:COHERE_API_KEY \u2014 secret",
       "detail": "Secret reference: env:COHERE_API_KEY",
       "id": "aibom-secret-env:COHERE_API_KEY_/home/vsts/work/1/s/app.py_37",
@@ -105,7 +105,7 @@
       }
     },
     {
-      "bom-ref": "BomRef.5081342544885895.2657935239973962",
+      "bom-ref": "BomRef.9716479662568747.45341022591578883",
       "description": "env:GOOGLE_API_KEY \u2014 secret",
       "detail": "Secret reference: env:GOOGLE_API_KEY",
       "id": "aibom-secret-env:GOOGLE_API_KEY_/home/vsts/work/1/s/app.py_27",

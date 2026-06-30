@@ -1,5 +1,5 @@
 {
-  "version": "1.167.0",
+  "version": "1.168.0",
   "results": [],
   "errors": [
     {
@@ -12,22 +12,24 @@
   ],
   "paths": {
     "scanned": [
+      "1.py",
+      "2.py",
+      "3.py",
       "README.md",
-      "app.py",
-      "azure-pipelines.yml",
       "cytex.yml",
+      "demo.py",
       "grype-report.json",
       "semgrep-report.json"
     ]
   },
   "time": {
     "rules": [],
-    "rules_parse_time": 0.7372210025787354,
+    "rules_parse_time": 0.6176950931549072,
     "profiling_times": {
-      "config_time": 1.5268232822418213,
-      "core_time": 1.126051425933838,
-      "ignores_time": 0.0014667510986328125,
-      "total_time": 2.6588480472564697
+      "config_time": 1.2267422676086426,
+      "core_time": 1.0020349025726318,
+      "ignores_time": 0.001392364501953125,
+      "total_time": 2.234654426574707
     },
     "parsing_time": {
       "total_time": 0.0,
@@ -42,10 +44,10 @@
       "very_slow_files": []
     },
     "scanning_time": {
-      "total_time": 0.08693194389343262,
+      "total_time": 0.1010289192199707,
       "per_file_time": {
-        "mean": 0.0051136437584372125,
-        "std_dev": 0.00011224648828451587
+        "mean": 0.004392561705216117,
+        "std_dev": 7.46554348869514e-05
       },
       "very_slow_stats": {
         "time_ratio": 0.0,
@@ -82,13 +84,13 @@
       "project_level_time": 0.0,
       "file_level_time": 0.0,
       "rules_with_project_prefilters_ratio": 0.0,
-      "rules_with_file_prefilters_ratio": 0.8917089678510999,
-      "rules_selected_ratio": 0.1218274111675127,
-      "rules_matched_ratio": 0.1218274111675127
+      "rules_with_file_prefilters_ratio": 0.9681851048445409,
+      "rules_selected_ratio": 0.035430224150397684,
+      "rules_matched_ratio": 0.035430224150397684
     },
     "targets": [],
     "total_bytes": 0,
-    "max_memory_bytes": 771305408
+    "max_memory_bytes": 768713408
   },
   "engine_requested": "OSS",
   "skipped_rules": [],
