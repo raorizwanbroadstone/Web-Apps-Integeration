@@ -35,10 +35,17 @@ pip install requests python-dotenv
 
 ```env
 AZURE_DEVOPS_ORG=your-organization-name
-AZURE_DEVOPS_PAT=your-personal-access-token
+
+# Microsoft Entra ID (App Registration) credentials
+DIRECTORY_ID=your-directory-tenant-id
+APPLICATION_ID=your-application-client-id
+SECRET_KEY=your-client-secret-value
 ```
 
-This integration uses Azure DevOps PAT authentication only. You do not need an application ID, directory ID, or client secret for this flow.
+This integration authenticates with a Microsoft Entra ID App Registration using the
+OAuth client-credentials flow — no Personal Access Token is required. `DIRECTORY_ID`
+is the tenant ID, `APPLICATION_ID` is the client ID, and `SECRET_KEY` is the client
+secret value. The organization name is still needed for API routing.
 
 ## Groq API Key Setup
 
@@ -55,20 +62,37 @@ The pipeline also includes a safe debug step that confirms the variable is prese
 
 ---
 
-## How to Create a PAT
+## How to Set Up the App Registration
 
-1. Sign in to Azure DevOps and click your profile picture (top right)
-2. Go to **Personal Access Tokens** → **New Token**
-3. Give it a name, set an expiry, and choose **Custom defined** under Scopes
-4. Grant the following permissions:
+1. In the **Azure portal** → **Microsoft Entra ID** → **App registrations** → **New registration**. Copy the **Application (client) ID** and **Directory (tenant) ID**.
+2. Under **Certificates & secrets** → **New client secret**, create a secret and copy its **value** (shown only once).
+3. Put these into `.env` as `APPLICATION_ID`, `DIRECTORY_ID`, and `SECRET_KEY`.
+
+The token is requested against the well-known Azure DevOps resource ID
+(`499b84ac-1321-427f-aa17-267ca6975798`) using the `.default` scope, so no Entra API
+permission grant or admin consent is required — authorization is governed entirely by
+the service principal's membership and permissions inside the Azure DevOps organization
+(next section).
+
+## Grant the Service Principal Access in Azure DevOps
+
+An App Registration cannot access Azure DevOps from credentials alone — the service
+principal must be added to the organization and granted permissions:
+
+1. **Organization Settings** → **Users** → **Add users**, enter the app registration by name / Application ID, and assign the **Basic** access level.
+2. Grant it the same permissions a PAT would need by adding it to the appropriate security group(s):
 
 | Scope | Permission | Required For |
 |-------|-----------|--------------|
 | Code | Read and write | Read repositories and commit `cytex.yml` |
 | Build | Read and execute | Create pipelines, queue runs, download artifacts |
 
-5. Click **Create** and copy the token — it will not be shown again
-6. Paste it as `AZURE_DEVOPS_PAT` in your `.env` file
+Creating pipeline *definitions* may require **Build Administrator** (or equivalent) at the
+project level. If `create_pipeline` returns 403, escalate the service principal's build
+permissions accordingly.
+
+> **Note:** client secrets expire. When they do, token acquisition fails with a 401 at
+> the login endpoint — rotate the secret in the portal and update `SECRET_KEY`.
 
 ---
 

@@ -3,14 +3,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ORG = os.getenv("AZURE_DEVOPS_ORG")
-PAT = os.getenv("AZURE_DEVOPS_PAT")
+# Microsoft Entra ID (App Registration) client-credentials auth.
+TENANT_ID = os.getenv("DIRECTORY_ID")      # Directory (tenant) ID
+CLIENT_ID = os.getenv("APPLICATION_ID")    # Application (client) ID
+CLIENT_SECRET = os.getenv("SECRET_KEY")    # Client secret value
 
-if not ORG:
-    raise ValueError("AZURE_DEVOPS_ORG is required for Azure DevOps PAT authentication")
 
-if not PAT:
-    raise ValueError("AZURE_DEVOPS_PAT is required for Azure DevOps PAT authentication")
+for _name, _value in (("DIRECTORY_ID", TENANT_ID),
+                      ("APPLICATION_ID", CLIENT_ID),
+                      ("SECRET_KEY", CLIENT_SECRET)):
+    if not _value:
+        raise ValueError(f"{_name} is required for Azure DevOps Entra ID authentication")
 
 API_VERSION = "7.1"
 

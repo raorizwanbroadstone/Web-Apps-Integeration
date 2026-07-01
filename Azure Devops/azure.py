@@ -1,7 +1,6 @@
 import base64
 import time
 import requests
-from requests.auth import HTTPBasicAuth
 import io
 import json
 import zipfile
@@ -9,14 +8,57 @@ import os
 from constants import (
     BASE_URL,
     API_VERSION,
-    PAT,
+    TENANT_ID,
+    CLIENT_ID,
+    CLIENT_SECRET,
     REPORT_DIR,
     SBOM_DIR,
     RESOURCE_PREFIX,
     COMMIT_MESSAGE,
 )
 
-AUTH = HTTPBasicAuth("", PAT)
+# Well-known fixed resource ID (application ID) for Azure DevOps; same for every tenant.
+AZURE_DEVOPS_SCOPE = "499b84ac-1321-427f-aa17-267ca6975798/.default"
+TOKEN_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token"
+
+
+class EntraBearerAuth(requests.auth.AuthBase):
+    """Drop-in replacement for HTTPBasicAuth(PAT).
+
+    Acquires an Entra ID token via the client-credentials grant and injects it as a
+    Bearer header, refreshing automatically before expiry. Because it is a requests
+    AuthBase, every existing `auth=AUTH` call site keeps working unchanged.
+    """
+
+    def __init__(self):
+        self._token = None
+        self._expires_at = 0
+
+    def _fetch_token(self):
+        response = requests.post(
+            TOKEN_URL,
+            data={
+                "grant_type": "client_credentials",
+                "client_id": CLIENT_ID,
+                "client_secret": CLIENT_SECRET,
+                "scope": AZURE_DEVOPS_SCOPE,
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        self._token = payload["access_token"]
+        # Refresh 60s early so a token never expires mid-request during a long sweep.
+        self._expires_at = time.time() + int(payload.get("expires_in", 3600)) - 60
+
+    def __call__(self, request):
+        if self._token is None or time.time() >= self._expires_at:
+            self._fetch_token()
+        request.headers["Authorization"] = f"Bearer {self._token}"
+        return request
+
+
+AUTH = EntraBearerAuth()
 
 # Azure DevOps requires the old object ID when pushing to a branch.This sentinel value is used when the branch does not yet exist.
 ZERO_SHA = "0000000000000000000000000000000000000000"
